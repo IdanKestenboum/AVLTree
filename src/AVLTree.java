@@ -63,8 +63,9 @@ public class AVLTree {
      * Returns the info of the item with the smallest key in the tree,
      * or null if the tree is empty.
      */
-    public String min()
-    {
+    public String min() {
+
+
         return "minDefaultString"; // to be replaced by student code
     }
 
@@ -177,9 +178,21 @@ public class AVLTree {
      * This class can and MUST be modified (It must implement IAVLNode).
      */
     public class AVLNode implements IAVLNode{
+        private int key;
+        private String value;
+        private IAVLNode right_son,left_son,father_node;
+        private int height;
+
+        //Node constructor
+        public AVLNode(int key, String value){
+            this.key=key;
+            this.value=value;
+            this.height=0;
+        }
+
         public int getKey()
         {
-            return 423; // to be replaced by student code
+            return this.key;
         }
         public String getValue()
         {
