@@ -8,7 +8,13 @@
  */
 
 public class AVLTree {
+    private IAVLNode Virtual_node;
 
+    public AVLTree() {
+        this.Virtual_node = new AVLNode(-1, "virtual");
+        Virtual_node.setHeight(-1);
+
+    }
     /**
      * public boolean empty()
      *
@@ -132,6 +138,85 @@ public class AVLTree {
      * precondition: search(x) != null (i.e. you can also assume that the tree is not empty)
      * postcondition: none
      */
+
+
+    public void Rebalance(IAVLNode node) {
+        int BF = node.getBF();
+        if (BF <= 1 | BF >= -1) { //either demotion/promotion needed and problem is fixed, or move up the tree
+            node.adjustHeight();
+            if (node.getParent().getBF() <= 1 | node.getParent().getBF() >= -1) { //checks parent is balanced if yes problem fixed
+                return;
+            } else if (node.getParent() != null) {//checks if root
+                Rebalance(node.getParent());  // if not root pass problem to father
+            }
+            return;
+        }
+
+        int son_BF = 0;
+        if (BF > 1) { //checks where is the deeper subtree
+            son_BF = -node.getRight().getBF();
+        } else if (BF < -1) {
+            son_BF = node.getLeft().getBF();
+        }
+        if (son_BF == -1 | son_BF == 0) {
+            Rotation(node, BF);
+        } else if (son_BF == 1) {// decides if to do double rotation
+            Double_Rotation(node, BF);
+        }
+        node.adjustHeight();
+        if (node.getParent().getParent() != null) {
+            Rebalance(node.getParent().getParent());
+        }
+    }
+
+
+
+    public void Rotation(IAVLNode node, int BF){
+        int node_height=node.getHeight();
+        if (BF < -1){ // makes left father
+            IAVLNode left=node.getLeft();
+            IAVLNode father = node.getParent();
+            IAVLNode left_right_son=left.getRight();
+            left.setRight(node);
+            node.setLeft(left_right_son);
+            node.setParent(left);
+            left_right_son.setParent(node);
+            left.setParent(father);
+            node.adjustSize();
+            left.adjustSize();
+        }
+        else if (BF > 1){ //makes right father
+            IAVLNode right=node.getRight();
+            IAVLNode right_left_son=right.getLeft();
+            IAVLNode father = node.getParent();
+            right.setLeft(node);
+            node.setRight(right_left_son);
+            node.setParent(right);
+            right_left_son.setParent(node);
+            right.setParent(father);
+            node.adjustSize();
+            right.adjustSize();
+        }
+
+    }
+
+    public void Double_Rotation(IAVLNode node,int BF){
+        int node_height=node.getHeight();
+        if (BF < -1){//makes left right father
+            IAVLNode left_node=node.getLeft();
+            Rotation(left_node,2);
+            Rotation(node,-2);
+
+        }
+        else if (BF > 1){//makes right left father
+            IAVLNode right_node=node.getRight();
+            Rotation(right_node,-2);
+            Rotation(node,2);
+        }
+
+    }
+
+
     public AVLTree[] split(int x)
     {
         return null;
@@ -167,6 +252,11 @@ public class AVLTree {
         public boolean isRealNode(); // Returns True if this is a non-virtual AVL node.
         public void setHeight(int height); // Sets the height of the node.
         public int getHeight(); // Returns the height of the node (-1 for virtual nodes).
+        public void adjustHeight();
+        public int getBF();
+        public void adjustSize();
+        public int getSize();
+
     }
 
     /**
@@ -181,13 +271,16 @@ public class AVLTree {
         private int key;
         private String value;
         private IAVLNode right_son,left_son,father_node;
-        private int height;
+        private int height,size;
 
         //Node constructor
         public AVLNode(int key, String value){
             this.key=key;
             this.value=value;
             this.height=0;
+            this.size=0;
+            this.left_son = Virtual_node;
+            this.right_son = Virtual_node;
         }
 
         public int getKey()
@@ -212,28 +305,33 @@ public class AVLTree {
         }
         public IAVLNode getRight()
         {
-            return null; // to be replaced by student code
+            return right_son;
         }
         public void setParent(IAVLNode node)
         {
-            return; // to be replaced by student code
+            this.father_node=node;
         }
         public IAVLNode getParent()
         {
-            return null; // to be replaced by student code
+            return this.father_node;
         }
         public boolean isRealNode()
         {
-            return true; // to be replaced by student code
+            if (this.height==-1){
+                return false;
+            }
+            return true;
         }
-        public void setHeight(int height)
-        {
-            return; // to be replaced by student code
+        public void setHeight(int height) {this.height=height;}
+        public void adjustSize(){
+            this.size = this.right_son.getSize() + this.left_son.getSize() + 1;
         }
-        public int getHeight()
-        {
-            return 424; // to be replaced by student code
+        public int getSize(){
+            return this.size;
         }
+        public void adjustHeight(){this.height=Integer.max(this.right_son.getHeight(),this.left_son.getHeight())+1;}
+        public int getHeight() {return this.height;}
+        public int getBF(){return this.right_son.getHeight()-this.left_son.getHeight();}
     }
 
 }

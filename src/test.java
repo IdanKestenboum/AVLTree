@@ -3,5 +3,6 @@ public class test {
         AVLTree mytree=new AVLTree();
         AVLTree.AVLNode node = mytree. new AVLNode(1,"HI");
         System.out.println(node.getKey());
+        System.out.println(node.getRight().getHeight());
     }
 }
