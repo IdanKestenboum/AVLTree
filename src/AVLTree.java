@@ -9,10 +9,14 @@
 
 public class AVLTree {
     private IAVLNode Virtual_node;
+    private IAVLNode min;
+    private IAVLNode max;
+    private IAVLNode root;
 
     public AVLTree() {
         this.Virtual_node = new AVLNode(-1, "virtual");
         Virtual_node.setHeight(-1);
+
 
     }
     /**
@@ -72,7 +76,7 @@ public class AVLTree {
     public String min() {
 
 
-        return "minDefaultString"; // to be replaced by student code
+        return this.min.getValue();
     }
 
     /**
@@ -83,7 +87,7 @@ public class AVLTree {
      */
     public String max()
     {
-        return "maxDefaultString"; // to be replaced by student code
+        return this.max.getValue();
     }
 
     /**
@@ -126,7 +130,7 @@ public class AVLTree {
      */
     public IAVLNode getRoot()
     {
-        return null;
+        return this.root;
     }
 
     /**
@@ -289,19 +293,19 @@ public class AVLTree {
         }
         public String getValue()
         {
-            return "getValueDefault"; // to be replaced by student code
+            return this.value;
         }
         public void setLeft(IAVLNode node)
         {
-            return; // to be replaced by student code
+            this.left_son=node;
         }
         public IAVLNode getLeft()
         {
-            return null; // to be replaced by student code
+            return this.left_son;
         }
         public void setRight(IAVLNode node)
         {
-            return; // to be replaced by student code
+            this.right_son=node;
         }
         public IAVLNode getRight()
         {
