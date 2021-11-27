@@ -1,8 +1,11 @@
+import java.util.Arrays;
+
 public class test {
     public static void main(String[] args) {
         AVLTree mytree=new AVLTree();
-        AVLTree.AVLNode node = mytree. new AVLNode(1,"HI");
-        System.out.println(node.getKey());
-        System.out.println(node.getRight().getHeight());
+        mytree.insert(3,"j");
+        int num = mytree.insert(4,"k");
+        System.out.println(Arrays.toString(mytree.keysToArray()) + " number of operations" + num);
+
     }
 }

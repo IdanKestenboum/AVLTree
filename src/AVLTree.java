@@ -17,7 +17,6 @@ public class AVLTree {
         this.Virtual_node = new AVLNode(-1, "virtual");
         Virtual_node.setHeight(-1);
 
-
     }
     /**
      * public boolean empty()
@@ -26,20 +25,54 @@ public class AVLTree {
      *
      */
     public boolean empty() {
-        return false; // to be replaced by student code
+        if (this.root==null){
+            return true;
+        }
+        return false;
     }
 
+    public IAVLNode tree_position(int key, boolean is_insert){
+        IAVLNode curr = root;
+        IAVLNode y = curr;
+        while (curr.getHeight() != -1){
+            y = curr;
+            if (key==curr.getKey()){
+                return curr;          //we found the key
+            }
+            else if (key<curr.getKey()){
+                if(is_insert) {
+                    curr.insertSizeUpdate();
+                }
+                curr=curr.getLeft();
+            }
+            else{
+                if(is_insert){
+                    curr.insertSizeUpdate();
+                }
+                curr=curr.getRight();
+
+            }
+        }
+        return y;
+    }
     /**
      * public String search(int k)
      *
      * Returns the info of an item with key k if it exists in the tree.
      * otherwise, returns null.
+     *
      */
     public String search(int k)
     {
-        return "searchDefaultString";  // to be replaced by student code
-    }
+        IAVLNode res=tree_position(k,false);
+        if (res.getKey()!=k){
+            return null;
+        }
+        else{
+            return res.getValue();
 
+        }
+    }
     /**
      * public int insert(int k, String i)
      *
@@ -90,6 +123,7 @@ public class AVLTree {
         return this.max.getValue();
     }
 
+
     /**
      * public int[] keysToArray()
      *
@@ -133,29 +167,18 @@ public class AVLTree {
         return this.root;
     }
 
-    /**
-     * public AVLTree[] split(int x)
-     *
-     * splits the tree into 2 trees according to the key x.
-     * Returns an array [t1, t2] with two AVL trees. keys(t1) < x < keys(t2).
-     *
-     * precondition: search(x) != null (i.e. you can also assume that the tree is not empty)
-     * postcondition: none
-     */
 
-
-    public void Rebalance(IAVLNode node) {
+    public void Rebalance(IAVLNode node,int[] counter) {
         int BF = node.getBF();
         if (BF <= 1 | BF >= -1) { //either demotion/promotion needed and problem is fixed, or move up the tree
             node.adjustHeight();
             if (node.getParent().getBF() <= 1 | node.getParent().getBF() >= -1) { //checks parent is balanced if yes problem fixed
                 return;
             } else if (node.getParent() != null) {//checks if root
-                Rebalance(node.getParent());  // if not root pass problem to father
+                Rebalance(node.getParent(),counter);  // if not root pass problem to father
             }
             return;
         }
-
         int son_BF = 0;
         if (BF > 1) { //checks where is the deeper subtree
             son_BF = -node.getRight().getBF();
@@ -164,16 +187,20 @@ public class AVLTree {
         }
         if (son_BF == -1 | son_BF == 0) {
             Rotation(node, BF);
+            counter[0]+=1;
         } else if (son_BF == 1) {// decides if to do double rotation
             Double_Rotation(node, BF);
+            counter[0]+=3;
         }
         node.adjustHeight();
+        int updated = node.getHeight();
+        if(temp!=updated) {
+            counter[0]+= Math.abs(temp-updated);
+        }
         if (node.getParent().getParent() != null) {
-            Rebalance(node.getParent().getParent());
+            Rebalance(node.getParent().getParent(),counter);
         }
     }
-
-
 
     public void Rotation(IAVLNode node, int BF){
         int node_height=node.getHeight();
@@ -220,7 +247,15 @@ public class AVLTree {
 
     }
 
-
+    /**
+     * public AVLTree[] split(int x)
+     *
+     * splits the tree into 2 trees according to the key x.
+     * Returns an array [t1, t2] with two AVL trees. keys(t1) < x < keys(t2).
+     *
+     * precondition: search(x) != null (i.e. you can also assume that the tree is not empty)
+     * postcondition: none
+     */
     public AVLTree[] split(int x)
     {
         return null;
