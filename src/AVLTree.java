@@ -179,10 +179,10 @@ public class AVLTree {
      */
     public int[] keysToArray()
     {
-        IAVLNode curr = min;
+        IAVLNode curr = this.min;
         int tree_size = this.root.getSize();
         int[] array = new int[tree_size];
-        for(int i = 0; i < tree_size - 1; i++){
+        for(int i = 0; i < tree_size-1 ; i++){
             array[i] = curr.getKey();
             curr = successor(curr);
         }
@@ -204,7 +204,7 @@ public class AVLTree {
             return getMin(node.getRight());
         }
         IAVLNode y = node.getParent();
-        while (y.getKey() != -1 && node==y.getRight()){
+        while (y!=Virtual_node && node==y.getRight()){
             node=y;
             y=node.getParent();
         }
@@ -274,18 +274,16 @@ public class AVLTree {
             node.getParent().adjustHeight();
             int updated3 = node.getParent().getHeight();
             if(temp3!=updated3) {
-                System.out.println("key"+ node.getParent().getKey() + " " + temp3 + " " + updated3 );
-                System.out.println(temp3-updated3);
                 counter[0]+= Math.abs(temp3-updated3);
             }
         }
         int BF = node.getBF();
-        System.out.println("BF: "+ BF);
+
         if (BF <= 1 && BF >= -1) { //either demotion/promotion needed and problem is fixed, or move up the
             if (node.getParent() == null)  { //checks if root
                 return;
             }
-            if(node.getParent().getBF() <= 1 | node.getParent().getBF() >= -1){//checks parent is balanced if yes problem fixed
+            if(node.getParent().getBF() <= 1 && node.getParent().getBF() >= -1){//checks parent is balanced if yes problem fixed
                 return;
             }
             if (node.getParent() != null) {//checks if root
@@ -295,10 +293,8 @@ public class AVLTree {
         }
         int son_BF = 0;
         if (BF > 1) { //checks where is the deeper subtree
-            System.out.println("rotation is going");
             son_BF = -node.getRight().getBF();
         } else if (BF < -1) {
-            System.out.println("rotation is going");
             son_BF = node.getLeft().getBF();
         }
         if (son_BF == -1 | son_BF == 0) {
@@ -330,15 +326,18 @@ public class AVLTree {
             node.setParent(left);
             left_right_son.setParent(node);
             left.setParent(father);
+            if (left.getParent()==null){
+                this.root=left;
+            }
+            node.adjustHeight();
             node.adjustSize();
             left.adjustSize();
-            int temp=node.getHeight();
-            node.adjustHeight();
-            int updated = node.getHeight();
+            int temp=left.getHeight();
+            left.adjustHeight();
+            int updated = left.getHeight();
             if(temp!=updated) {
                 counter[0]+=1+ Math.abs(temp-updated);
             }
-
         }
         else if (BF > 1){ //makes right father
             IAVLNode right=node.getRight();
@@ -349,17 +348,19 @@ public class AVLTree {
             node.setParent(right);
             right_left_son.setParent(node);
             right.setParent(father);
+            if (right.getParent()==null){
+                this.root=right;
+            }
+            node.adjustHeight();
             node.adjustSize();
             right.adjustSize();
             int temp=right.getHeight();
             right.adjustHeight();
             int updated = right.getHeight();
             if(temp!=updated) {
-                counter[0] += 1 + Math.abs(temp - updated);
+                counter[0] += Math.abs(temp - updated);
             }
         }
-        counter[0]++;
-        System.out.println("hi");
 
     }
 
@@ -503,6 +504,9 @@ public class AVLTree {
             this.size = this.right_son.getSize() + this.left_son.getSize() + 1;
         }
         public int getSize(){
+            if (this==Virtual_node){
+                return 0;
+            }
             return this.size;
         }
         public void adjustHeight(){this.height=Integer.max(this.right_son.getHeight(),this.left_son.getHeight())+1;}
