@@ -265,9 +265,13 @@ public class AVLTree {
             if(temp2!=updated2) {
                 counter[0]+= Math.abs(temp2-updated2);
             }
-            if (node.getParent() == null | node.getParent().getBF() <= 1 | node.getParent().getBF() >= -1) { //checks parent is balanced if yes problem fixed
+            if (node.getParent() == null)  { //checks if root
                 return;
-            } else if (node.getParent() != null) {//checks if root
+            }
+            else if(node.getParent().getBF() <= 1 | node.getParent().getBF() >= -1){//checks parent is balanced if yes problem fixed
+                return;
+            }
+            else if (node.getParent() != null) {//checks if root
                 Rebalance(node.getParent(),counter);  // if not root pass problem to father
             }
             return;
