@@ -258,7 +258,6 @@ public class AVLTree {
         return this.root;
     }
 
-
     public void Rebalance(IAVLNode node,int[] counter) {
         int BF = node.getBF();
         if (BF <= 1 | BF >= -1) { //either demotion/promotion needed and problem is fixed, or move up the
