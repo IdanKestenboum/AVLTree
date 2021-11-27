@@ -123,6 +123,12 @@ public class AVLTree {
             father.setRight(inserted);
         }
         inserted.setParent(father);
+        int temp=father.getHeight();
+        father.adjustHeight();
+        int updated = father.getHeight();
+        if(temp!=updated) {
+            counter[0]+= Math.abs(temp-updated);
+        }
         Rebalance(father,counter);
         return counter[0];
     }
@@ -176,28 +182,29 @@ public class AVLTree {
         IAVLNode curr = min;
         int tree_size = this.root.getSize();
         int[] array = new int[tree_size];
-        for(int i = 0; i < tree_size; i++){
+        for(int i = 0; i < tree_size - 1; i++){
             array[i] = curr.getKey();
             curr = successor(curr);
         }
+        array[tree_size-1] = curr.getKey();
 
         return array;
     }
 
     public IAVLNode getMin(IAVLNode node){
         IAVLNode curr=node;
-        while(curr.getRight()!=null){
+        while(curr.getLeft()!=Virtual_node){
             curr=curr.getLeft();
         }
         return curr;
     }
 
     public IAVLNode successor(IAVLNode node){
-        if(node.getRight() != null){
+        if(node.getRight().getKey() != -1){
             return getMin(node.getRight());
         }
         IAVLNode y = node.getParent();
-        while (y!=null&&node==y.getRight()){
+        while (y.getKey() != -1 && node==y.getRight()){
             node=y;
             y=node.getParent();
         }
@@ -218,7 +225,7 @@ public class AVLTree {
 
     public IAVLNode getMax(IAVLNode node){
         IAVLNode curr = node;
-        while(curr.getRight() != null){
+        while(curr.getRight() != Virtual_node){
             curr = curr.getRight();
         }
         return curr;
@@ -278,10 +285,10 @@ public class AVLTree {
             if (node.getParent() == null)  { //checks if root
                 return;
             }
-            else if(node.getParent().getBF() <= 1 | node.getParent().getBF() >= -1){//checks parent is balanced if yes problem fixed
+            if(node.getParent().getBF() <= 1 | node.getParent().getBF() >= -1){//checks parent is balanced if yes problem fixed
                 return;
             }
-            else if (node.getParent() != null) {//checks if root
+            if (node.getParent() != null) {//checks if root
                 Rebalance(node.getParent(),counter);  // if not root pass problem to father
             }
             return;
@@ -295,10 +302,10 @@ public class AVLTree {
             son_BF = node.getLeft().getBF();
         }
         if (son_BF == -1 | son_BF == 0) {
-            Rotation(node, BF);
+            Rotation(node, BF, counter);
             counter[0]+=1;
         } else if (son_BF == 1) {// decides if to do double rotation
-            Double_Rotation(node, BF);
+            Double_Rotation(node, BF, counter);
             counter[0]+=3;
         }
         int temp=node.getHeight();
@@ -312,7 +319,7 @@ public class AVLTree {
         }
     }
 
-    public void Rotation(IAVLNode node, int BF){
+    public void Rotation(IAVLNode node, int BF, int[] counter){
         int node_height=node.getHeight();
         if (BF < -1){ // makes left father
             IAVLNode left=node.getLeft();
@@ -325,6 +332,13 @@ public class AVLTree {
             left.setParent(father);
             node.adjustSize();
             left.adjustSize();
+            int temp=node.getHeight();
+            node.adjustHeight();
+            int updated = node.getHeight();
+            if(temp!=updated) {
+                counter[0]+=1+ Math.abs(temp-updated);
+            }
+
         }
         else if (BF > 1){ //makes right father
             IAVLNode right=node.getRight();
@@ -337,16 +351,24 @@ public class AVLTree {
             right.setParent(father);
             node.adjustSize();
             right.adjustSize();
+            int temp=right.getHeight();
+            right.adjustHeight();
+            int updated = right.getHeight();
+            if(temp!=updated) {
+                counter[0] += 1 + Math.abs(temp - updated);
+            }
         }
+        counter[0]++;
+        System.out.println("hi");
 
     }
 
-    public void Double_Rotation(IAVLNode node,int BF){
+    public void Double_Rotation(IAVLNode node,int BF, int[] counter){
         int node_height=node.getHeight();
         if (BF < -1){//makes left right father
             IAVLNode left_node=node.getLeft();
-            Rotation(left_node,2);
-            Rotation(node,-2);
+            Rotation(left_node,2,counter);
+            Rotation(node,-2,counter);
             node.getParent().getLeft().adjustHeight();
         }
         else if (BF > 1){//makes right left father
@@ -429,7 +451,7 @@ public class AVLTree {
             this.key=key;
             this.value=value;
             this.height=0;
-            this.size=0;
+            this.size=1;
             this.left_son = Virtual_node;
             this.right_son = Virtual_node;
         }
