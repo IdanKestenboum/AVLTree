@@ -181,7 +181,7 @@ public class AVLTree {
             curr = successor(curr);
         }
 
-        return array; // to be replaced by student code
+        return array;
     }
 
     public IAVLNode getMin(IAVLNode node){
@@ -205,11 +205,11 @@ public class AVLTree {
     }
 
     public IAVLNode predecessor(IAVLNode node){
-        if(node.getLeft() != null){
+        if(node.getLeft().getKey() != -1){
             return getMax(node.getLeft());
         }
         IAVLNode y = node.getParent();
-        while (y!=null&&node==y.getLeft()){
+        while (y.getKey()!=-1&&node==y.getLeft()){
             node=y;
             y=node.getParent();
         }
@@ -243,7 +243,12 @@ public class AVLTree {
      */
     public int size()
     {
-        return 422; // to be replaced by student code
+        if (this.root==null){
+            return 0;
+        }
+        else{
+            return this.root.getSize();
+        }
     }
 
     /**
@@ -257,14 +262,19 @@ public class AVLTree {
     }
 
     public void Rebalance(IAVLNode node,int[] counter) {
-        int BF = node.getBF();
-        if (BF <= 1 | BF >= -1) { //either demotion/promotion needed and problem is fixed, or move up the
-            int temp2=node.getHeight();
-            node.adjustHeight();
-            int updated2 = node.getHeight();
-            if(temp2!=updated2) {
-                counter[0]+= Math.abs(temp2-updated2);
+        if(node.getParent() != null){
+            int temp3=node.getParent().getHeight();
+            node.getParent().adjustHeight();
+            int updated3 = node.getParent().getHeight();
+            if(temp3!=updated3) {
+                System.out.println("key"+ node.getParent().getKey() + " " + temp3 + " " + updated3 );
+                System.out.println(temp3-updated3);
+                counter[0]+= Math.abs(temp3-updated3);
             }
+        }
+        int BF = node.getBF();
+        System.out.println("BF: "+ BF);
+        if (BF <= 1 && BF >= -1) { //either demotion/promotion needed and problem is fixed, or move up the
             if (node.getParent() == null)  { //checks if root
                 return;
             }
@@ -278,8 +288,10 @@ public class AVLTree {
         }
         int son_BF = 0;
         if (BF > 1) { //checks where is the deeper subtree
+            System.out.println("rotation is going");
             son_BF = -node.getRight().getBF();
         } else if (BF < -1) {
+            System.out.println("rotation is going");
             son_BF = node.getLeft().getBF();
         }
         if (son_BF == -1 | son_BF == 0) {
@@ -339,8 +351,8 @@ public class AVLTree {
         }
         else if (BF > 1){//makes right left father
             IAVLNode right_node=node.getRight();
-            Rotation(right_node,-2);
-            Rotation(node,2);
+            Rotation(right_node,-2,counter);
+            Rotation(node,2,counter);
             node.getParent().getRight().adjustHeight();
         }
 
