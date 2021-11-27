@@ -317,6 +317,7 @@ public class AVLTree {
 
     public void Rotation(IAVLNode node, int BF, int[] counter){
         int node_height=node.getHeight();
+        System.out.println("single rotate");
         if (BF < -1){ // makes left father
             IAVLNode left=node.getLeft();
             IAVLNode father = node.getParent();
@@ -336,7 +337,7 @@ public class AVLTree {
             left.adjustHeight();
             int updated = left.getHeight();
             if(temp!=updated) {
-                counter[0]+=1+ Math.abs(temp-updated);
+                counter[0]+= Math.abs(temp-updated);
             }
         }
         else if (BF > 1){ //makes right father
@@ -366,6 +367,7 @@ public class AVLTree {
 
     public void Double_Rotation(IAVLNode node,int BF, int[] counter){
         int node_height=node.getHeight();
+        System.out.println("double rotation");
         if (BF < -1){//makes left right father
             IAVLNode left_node=node.getLeft();
             Rotation(left_node,2,counter);
