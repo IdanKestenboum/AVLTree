@@ -165,7 +165,6 @@ public class AVLTree {
         return this.max.getValue();
     }
 
-
     /**
      * public int[] keysToArray()
      *
@@ -236,7 +235,6 @@ public class AVLTree {
     {
         return new String[55]; // to be replaced by student code
     }
-
 
     /**
      * public int size()
