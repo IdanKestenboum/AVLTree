@@ -277,6 +277,9 @@ public class AVLTree {
                 counter[0]+= Math.abs(temp3-updated3);
             }
         }
+        if (node.getParent()==null){
+            node.adjustHeight(); //Idan added this
+        }
         int BF = node.getBF();
 
         if (BF <= 1 && BF >= -1) { //either demotion/promotion needed and problem is fixed, or move up the
