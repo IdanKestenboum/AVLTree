@@ -284,7 +284,7 @@ public class AVLTree {
                 return;
             }
             if(node.getParent().getBF() <= 1 && node.getParent().getBF() >= -1){//checks parent is balanced if yes problem fixed
-                return;
+                Rebalance(node.getParent(),counter); //Idan added this
             }
             if (node.getParent() != null) {//checks if root
                 Rebalance(node.getParent(),counter);  // if not root pass problem to father
@@ -327,6 +327,9 @@ public class AVLTree {
             node.setParent(left);
             left_right_son.setParent(node);
             left.setParent(father);
+            if (father!=null){
+                father.setLeft(left);
+            }
             if (left.getParent()==null){
                 this.root=left;
             }
@@ -341,6 +344,8 @@ public class AVLTree {
             }
         }
         else if (BF > 1){ //makes right father
+            if (node.getKey()==3){
+            }
             IAVLNode right=node.getRight();
             IAVLNode right_left_son=right.getLeft();
             IAVLNode father = node.getParent();
@@ -349,6 +354,9 @@ public class AVLTree {
             node.setParent(right);
             right_left_son.setParent(node);
             right.setParent(father);
+            if (father!=null){
+                father.setRight(right);
+            }
             if (right.getParent()==null){
                 this.root=right;
             }
