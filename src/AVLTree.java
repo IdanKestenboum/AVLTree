@@ -277,9 +277,6 @@ public class AVLTree {
                 counter[0]+= Math.abs(temp3-updated3);
             }
         }
-        if (node.getParent()==null){
-            node.adjustHeight(); //Idan added this
-        }
         int BF = node.getBF();
 
         if (BF <= 1 && BF >= -1) { //either demotion/promotion needed and problem is fixed, or move up the
@@ -287,7 +284,8 @@ public class AVLTree {
                 return;
             }
             if(node.getParent().getBF() <= 1 && node.getParent().getBF() >= -1){//checks parent is balanced if yes problem fixed
-                Rebalance(node.getParent(),counter); //Idan added this
+                Rebalance(node.getParent(),counter); //Idan added this - so the root can rotate
+
             }
             if (node.getParent() != null) {//checks if root
                 Rebalance(node.getParent(),counter);  // if not root pass problem to father
@@ -320,7 +318,7 @@ public class AVLTree {
 
     public void Rotation(IAVLNode node, int BF, int[] counter){
         int node_height=node.getHeight();
-        System.out.println("single rotate");
+        System.out.println("single rotate to node "+node.getKey()+ " "+node.getBF()+"node left height:"+node.getLeft().getHeight()+"node right height"+node.getRight().getHeight());
         if (BF < -1){ // makes left father
             IAVLNode left=node.getLeft();
             IAVLNode father = node.getParent();
@@ -339,6 +337,9 @@ public class AVLTree {
             node.adjustHeight();
             node.adjustSize();
             left.adjustSize();
+            if (left.getParent()!=null){//idan added this
+                left.getParent().adjustHeight();//idan added this
+            }
             int temp=left.getHeight();
             left.adjustHeight();
             int updated = left.getHeight();
@@ -366,6 +367,9 @@ public class AVLTree {
             node.adjustHeight();
             node.adjustSize();
             right.adjustSize();
+            if (right.getParent()!=null){ //idan added this
+                right.getParent().adjustHeight();//idan added this
+            }
             int temp=right.getHeight();
             right.adjustHeight();
             int updated = right.getHeight();
