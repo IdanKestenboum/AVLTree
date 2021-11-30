@@ -66,10 +66,6 @@ public class test {
 
     }
     public static void main(String[] args) {
-    double_rot_check();
-
-
-
-
+        double_rot_check();
     }
 }
