@@ -240,7 +240,16 @@ public class AVLTree {
      */
     public String[] infoToArray()
     {
-        return new String[55]; // to be replaced by student code
+        IAVLNode curr = this.min;
+        int tree_size = this.root.getSize();
+        String[] array = new String[tree_size];
+        for(int i = 0; i < tree_size-1 ; i++){
+            array[i] = curr.getValue();
+            curr = successor(curr);
+        }
+        array[tree_size-1] = curr.getValue();
+
+        return array;
     }
 
     /**
@@ -318,7 +327,8 @@ public class AVLTree {
 
     public void Rotation(IAVLNode node, int BF, int[] counter){
         int node_height=node.getHeight();
-        System.out.println("single rotate to node "+node.getKey()+ " "+node.getBF()+"node left height:"+node.getLeft().getHeight()+"node right height"+node.getRight().getHeight());
+        System.out.println("single rotate to node "+node.getKey()+ " node bf is"+node.getBF()+"node left"+node.getLeft().getKey()+"node right"+node.getRight().getKey());
+
         if (BF < -1){ // makes left father
             IAVLNode left=node.getLeft();
             IAVLNode father = node.getParent();
@@ -329,7 +339,13 @@ public class AVLTree {
             left_right_son.setParent(node);
             left.setParent(father);
             if (father!=null){
-                father.setLeft(left);
+                if (father.getKey()<left.getKey()){//idan changed
+                    father.setRight(left);//idan changed
+                }
+                if (father.getKey()> left.getKey()){//idan changed
+                    father.setLeft(left);//idan changed
+                }
+
             }
             if (left.getParent()==null){
                 this.root=left;
@@ -348,8 +364,6 @@ public class AVLTree {
             }
         }
         else if (BF > 1){ //makes right father
-            if (node.getKey()==3){
-            }
             IAVLNode right=node.getRight();
             IAVLNode right_left_son=right.getLeft();
             IAVLNode father = node.getParent();
@@ -360,6 +374,13 @@ public class AVLTree {
             right.setParent(father);
             if (father!=null){
                 father.setRight(right);
+                if (father.getKey()<right.getKey()){//idan changed
+                    father.setRight(right);//idan changed
+                }
+                if (father.getKey()> right.getKey()){//idan changed
+                    father.setLeft(right);//idan changed
+                }
+
             }
             if (right.getParent()==null){
                 this.root=right;
@@ -377,12 +398,11 @@ public class AVLTree {
                 counter[0] += Math.abs(temp - updated);
             }
         }
-
     }
 
     public void Double_Rotation(IAVLNode node,int BF, int[] counter){
         int node_height=node.getHeight();
-        System.out.println("double rotation");
+        System.out.println("double rotation on "+node.getKey()+"its BF is"+node.getBF());
         if (BF < -1){//makes left right father
             IAVLNode left_node=node.getLeft();
             Rotation(left_node,2,counter);
