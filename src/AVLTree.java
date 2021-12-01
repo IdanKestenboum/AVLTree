@@ -19,6 +19,7 @@ public class AVLTree {
         root = null;
         this.min=min;
         this.max=max;
+        System.out.println("this is our tree");
 
     }
     public AVLTree(IAVLNode node, IAVLNode new_min, IAVLNode new_max){
@@ -166,12 +167,17 @@ public class AVLTree {
     }
 
     private int deleteNode(IAVLNode node, int[] counter){
+        if(this.size() == 1){
+            this.root = null;
+            min = null;
+            max = null;
+        }
         if(node == min) min = successor(node);
         if(node == max) max = predecessor(node);
         if(node.getRight() == Virtual_node){//node is unary, has left son, or node is leaf and left son is virtual node
             IAVLNode father = node.getParent();
             if(node.getKey() < father.getKey()){//is left child
-                father.setLeft(node.getLeft());
+                father.setLeft(node.getLeft());///UPDATE FATHER OF SON! TODO
             }
             else{//is right child
                 father.setRight(node.getLeft());
@@ -187,14 +193,10 @@ public class AVLTree {
             }
         }
         else {
-            if(this.size() == 1){
-                this.root = null;
-                min = null;
-                max = null;
-            }
-            IAVLNode replacement = predecessor(node);///Now what do we do? replace the values? replace the node itself? to be decided
 
+            IAVLNode replacement = predecessor(node);///Now what do we do? replace the values? replace the node itself? to be decided
             deleteNode(replacement, counter);
+
 
 
         }
@@ -239,6 +241,9 @@ public class AVLTree {
 //            System.out.println(curr.getKey() + " BF: " + curr.getBF() + " height diff" + (curr.getHeight()-curr.getLeft().getHeight()));
             int temp = curr.getKey();
             if(Math.abs(curr.getBF()) >1) System.out.println(curr.getKey() + " Error in BF: " + curr.getBF());
+            if(curr.getParent() != null) {
+                if (curr.getHeight() == curr.getParent().getHeight()) System.out.println(curr.getKey() + " is same height as parent: " + curr.getParent().getKey());
+            }
             curr = successor(curr);
             int temp2 = curr.getKey();
             if(temp2 <= temp) System.out.println(curr.getKey() + " Error in ascending order!");
@@ -358,6 +363,7 @@ public class AVLTree {
 
                 Rebalance(node.getParent(),counter); //Idan added this - so the root can rotate
 //                System.out.println("parent fixed, grandparent not fixed");
+
                 return;
 
             }
@@ -365,6 +371,7 @@ public class AVLTree {
 //                System.out.println("problem with parent");
                 Rebalance(node.getParent(),counter);  // if not root pass problem to father
             }
+
             return;
         }
 //        System.out.println("WE GOT HERE");
@@ -619,7 +626,8 @@ public class AVLTree {
 //            }
 //            if (left_son == Virtual_node || right_son == Virtual_node){
 //                System.out.println("son is virtual");
-//            }
+
+
             if(left_son != Virtual_node) {
                 if (this.left_son.getParent() != this) {
                     System.out.println(this.getKey() + " should be parent of " + this.right_son.getKey()

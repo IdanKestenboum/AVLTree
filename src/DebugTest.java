@@ -99,7 +99,7 @@ class DebugTest {
     }
 
     public static boolean testParents(AVLTree.IAVLNode node) {
-        if (node == null || node.getHeight() == -1) return true;
+        if (node.getHeight() == -1) return true;
         else if (node.getRight() == null) {
             boolean res = node.getLeft().getParent() == node;
             if (!res) System.out.println("node " + node.getValue() + "'s left child has wrong parent");
@@ -110,9 +110,10 @@ class DebugTest {
             return res &&
                     testParents(node.getRight());
         }
+
         boolean res =
-                node.getLeft().getParent() == node &&
-                        node.getRight().getParent() == node &&
+                (node.getLeft().getParent() == node || node.getLeft().getHeight() == -1) &&
+                        (node.getRight().getParent() == node || node.getLeft().getHeight() == -1) &&
                         testParents(node.getRight()) &&
                         testParents(node.getLeft());
         if (!res) System.out.println("node " + node.getValue() + "'s children have wrong parent");
@@ -174,7 +175,7 @@ class DebugTest {
 
         for (int k : keys) {
             tree.insert(k, Integer.toString(k));
-            System.out.println(tree.getRoot());
+            System.out.println(tree.getRoot().getKey());
             Thread.sleep(200L);
             if (!testParents(tree.getRoot())) {
                 System.out.println("error with parents after inserting " + k);
@@ -342,7 +343,7 @@ class DebugTest {
             System.out.println(i);
             int size = rand.nextInt(10000);
             System.out.println("testing tree of size " + size);
-            testRandomTree(size);
+            testInsert();
         }
     }
 }
