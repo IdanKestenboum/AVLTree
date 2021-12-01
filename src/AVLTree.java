@@ -343,6 +343,7 @@ public class AVLTree {
 
         if (BF <= 1 && BF >= -1) { //balance factor is valid, but we dont know if rank difference with parent is valid
             if (node.getParent() == null)  { //checks if root
+//                System.out.println("root1");
                 return;
             }
             int prev = node.getParent().getHeight();
@@ -351,18 +352,22 @@ public class AVLTree {
 
             if(node.getParent().getBF() <= 1 && node.getParent().getBF() >= -1){//checks parent is balanced
                 if(prev == post){//father didnt change therefore problem doesnt continue
+//                    System.out.println("problem doesnt continue");
                     return;
                 }
+
                 Rebalance(node.getParent(),counter); //Idan added this - so the root can rotate
+//                System.out.println("parent fixed, grandparent not fixed");
                 return;
 
             }
             if (node.getParent() != null) {//checks if root
+//                System.out.println("problem with parent");
                 Rebalance(node.getParent(),counter);  // if not root pass problem to father
             }
             return;
         }
-        System.out.println("WE GOT HERE");
+//        System.out.println("WE GOT HERE");
         int son_BF = 0;
         if (BF > 1) { //checks where is the bigger difference subtree +1 means right is deeper
             son_BF = -node.getRight().getBF();
@@ -374,7 +379,7 @@ public class AVLTree {
             counter[0]+=1;
         } else if (son_BF == 1) {// decides if to do double rotation
             Double_Rotation(node, BF, counter);
-            counter[0]+=3;
+            counter[0]+=2;
         }
         node.getParent().adjustHeight(counter);
 
@@ -385,10 +390,10 @@ public class AVLTree {
     }
 
     public void Rotation(IAVLNode node, int BF, int[] counter){
-        int node_height=node.getHeight();
+//        int node_height=node.getHeight();
 
         if (BF < -1){ // makes left father
-            System.out.println("left: "+ node.getLeft().getKey() + " becomes father of " + node.getKey());
+//            System.out.println("left: "+ node.getLeft().getKey() + " becomes father of " + node.getKey());
             IAVLNode left=node.getLeft();
             IAVLNode father = node.getParent();
             IAVLNode left_right_son=left.getRight();
@@ -419,7 +424,7 @@ public class AVLTree {
 
         }
         else if (BF > 1){ //makes right father
-            System.out.println(node.getRight().getKey() + " becomes father of " + node.getKey());
+//            System.out.println(node.getRight().getKey() + " becomes father of " + node.getKey());
             IAVLNode right=node.getRight();
             IAVLNode right_left_son=right.getLeft();
             IAVLNode father = node.getParent();
@@ -454,7 +459,7 @@ public class AVLTree {
 
     public void Double_Rotation(IAVLNode node,int BF, int[] counter){
         int node_height=node.getHeight();
-        System.out.println("double rotation on "+node.getKey()+"its BF is"+node.getBF());
+//        System.out.println("double rotation on "+node.getKey()+"its BF is"+node.getBF());
         if (BF < -1){//makes left right father
             IAVLNode left_node=node.getLeft();
             Rotation(left_node,2,counter);
@@ -608,9 +613,24 @@ public class AVLTree {
             int prev = this.height;
             this.height = Integer.max(this.right_son.getHeight(), this.left_son.getHeight()) + 1;
             int post = this.height;
-            if (prev != post) {
-                System.out.println("number of demote/promote: " + this.key + " " + (post - prev) + " height: " + height+" R "+ right_son.getKey()+ " L "+ left_son.getKey());
-                counter[0] += Math.abs(post - prev);
+//            if (prev != post) {
+//                System.out.println("number of demote/promote: " + this.key + " " + (post - prev) + " height: " + height+" R "+ right_son.getKey()+ " L "+ left_son.getKey());
+//                counter[0] += Math.abs(post - prev);
+//            }
+//            if (left_son == Virtual_node || right_son == Virtual_node){
+//                System.out.println("son is virtual");
+//            }
+            if(left_son != Virtual_node) {
+                if (this.left_son.getParent() != this) {
+                    System.out.println(this.getKey() + " should be parent of " + this.right_son.getKey()
+                            + " is son of " + this.right_son.getParent().getKey());
+                }
+            }
+            if(right_son != Virtual_node){
+                if(this.right_son.getParent() != this){
+                    System.out.println(this.getKey() + " should be parent of " + this.right_son.getKey()
+                            + " is son of " + this.right_son.getParent().getKey());
+                }
             }
         }//  Yotam Added for easy promotion/demotion count
         public int getHeight() {return this.height;}

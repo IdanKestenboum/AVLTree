@@ -99,7 +99,7 @@ class DebugTest {
     }
 
     public static boolean testParents(AVLTree.IAVLNode node) {
-        if (node == null || node.getHeight() == 0) return true;
+        if (node == null || node.getHeight() == -1) return true;
         else if (node.getRight() == null) {
             boolean res = node.getLeft().getParent() == node;
             if (!res) System.out.println("node " + node.getValue() + "'s left child has wrong parent");
