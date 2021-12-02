@@ -19,7 +19,6 @@ public class AVLTree {
         root = null;
         this.min=min;
         this.max=max;
-        System.out.println("this is our tree");
 
     }
     public AVLTree(IAVLNode node, IAVLNode new_min, IAVLNode new_max){
@@ -255,7 +254,7 @@ public class AVLTree {
 
     public IAVLNode getMin(IAVLNode node){
         IAVLNode curr=node;
-        while(curr.getLeft()!=Virtual_node){
+        while(curr.getLeft().getKey()!=-1){
             curr=curr.getLeft();
         }
         return curr;
@@ -505,9 +504,40 @@ public class AVLTree {
      * precondition: keys(t) < x < keys() or keys(t) > x > keys(). t/tree might be empty (rank = -1).
      * postcondition: none
      */
-    public int join(IAVLNode x, AVLTree t)
-    {
-        return 1;
+    public int join(IAVLNode x, AVLTree t) {
+        AVLTree highertree;
+        AVLTree lowertree;
+        if (this.root.getHeight()>t.root.getHeight()){
+            highertree=this;
+            lowertree=t;
+        }
+        else{
+            highertree=t;
+            lowertree=this;
+        }
+        IAVLNode cur= highertree.getRoot();
+        while(cur.getHeight()>t.getRoot().getHeight()&&cur.getLeft()!=Virtual_node){
+            cur=cur.getLeft();
+        }
+        highertree.min=lowertree.getMin(lowertree.getRoot());
+
+        x.setLeft(lowertree.root);
+        lowertree.root.setParent(x); // root is not a root anymore... should do something?
+        cur.getParent().setLeft(x);
+        x.setParent(cur.getParent());
+
+        x.setRight(cur);
+        cur.setParent(x);
+
+        x.adjustHeight();
+        x.adjustSize();
+
+        x.getParent().adjustSize(); // parents size didnt adjust during rotation so I added this
+
+        int[] fakecounter={0};
+        Rebalance(x,fakecounter);
+
+        return Math.abs(this.getRoot().getHeight()-t.getRoot().getHeight())+1;
     }
 
     /**

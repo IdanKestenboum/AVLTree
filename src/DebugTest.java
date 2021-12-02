@@ -45,7 +45,6 @@ class DebugTest {
 
         for (int k : keys) {
             tree.insert(k, Integer.toString(k));
-            System.out.println(tree.getRoot());
             Thread.sleep(200L);
             if (!testParents(tree.getRoot())) {
                 System.out.println("error with parents after inserting " + k);
@@ -179,6 +178,7 @@ class DebugTest {
             Thread.sleep(200L);
             if (!testParents(tree.getRoot())) {
                 System.out.println("error with parents after inserting " + k);
+                break;
             }
             System.out.println("------");
         }
@@ -324,8 +324,8 @@ class DebugTest {
         System.out.println("-testing inserts");
         testInserts(keys, tree, debug_tree);
         System.out.println(tree.getRoot());
-        System.out.println("-testing deletes");
-        testDeletes(keys, tree, debug_tree, (int) Math.ceil(size / 10.0));
+        //System.out.println("-testing deletes");
+        //testDeletes(keys, tree, debug_tree, (int) Math.ceil(size / 10.0));
 
 //        if (keys.size() > 0) {
 //            System.out.println("-testing split");
