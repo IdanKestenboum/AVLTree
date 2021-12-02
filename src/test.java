@@ -79,10 +79,39 @@ public class test {
         for(int i = 0; i < 4; i++) {
             tree2.insert(i, "k");
         }
+        AVLTree tree3=new AVLTree();
+        for(int i = 1; i < 5; i++) {
+            tree3.insert(i, "k");
+        }
+
+        AVLTree tree4=new AVLTree();
+        for(int i = 9; i < 11; i++) {
+            tree4.insert(i, "k");
+        }
+
+
         AVLTree.IAVLNode x=tree1. new AVLNode(6,"HI");
         System.out.println(Arrays.toString(tree1.keysToArray()));
         tree1.join(x,tree2);
         System.out.println(Arrays.toString(tree1.keysToArray()));
+
+//        System.out.println(Arrays.toString(tree2.keysToArray()));
+//        tree2.join(x,tree1);
+//        System.out.println(Arrays.toString(tree2.keysToArray()));
+
+//        System.out.println(Arrays.toString(tree3.keysToArray()));
+//        tree3.join(x,tree4);
+//        System.out.println(Arrays.toString(tree3.keysToArray()));
+
+//        System.out.println(Arrays.toString(tree4.keysToArray()));
+//        tree4.join(x,tree3);
+//        System.out.println(Arrays.toString(tree4.keysToArray()));
+//        System.out.println("**end state**");
+//        System.out.println("root is "+ tree2.getRoot().getKey());
+//        System.out.println("right is "+tree2.getRoot().getRight().getKey());
+//        System.out.println("left is "+tree2.getRoot().getLeft().getKey());
+
+
 //        System.out.println("**end state**");
 //        System.out.println("root is "+ tree1.getRoot().getKey());
 //        System.out.println("root height is "+ tree1.getRoot().getHeight());
@@ -110,7 +139,7 @@ public class test {
     }
 
     public static void main(String[] args) {
-        loop_insert_check();
+        test_join();
 
 
     }

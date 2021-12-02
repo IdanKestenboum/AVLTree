@@ -505,35 +505,105 @@ public class AVLTree {
      * postcondition: none
      */
     public int join(IAVLNode x, AVLTree t) {
-        AVLTree highertree;
-        AVLTree lowertree;
+        AVLTree biggertree;
+        AVLTree smallertree;
+        if (x.getKey()<this.min.getKey()){
+            biggertree=this;
+            smallertree=t;
+        }
+        else{
+            biggertree=t;
+            smallertree=this;
+        }
+        AVLTree highertree=null;
+        AVLTree lowertree=null;
+
         if (this.root.getHeight()>t.root.getHeight()){
             highertree=this;
             lowertree=t;
         }
-        else{
+        if(t.root.getHeight()>this.root.getHeight()){
             highertree=t;
             lowertree=this;
         }
-        IAVLNode cur= highertree.getRoot();
-        while(cur.getHeight()>t.getRoot().getHeight()&&cur.getLeft()!=Virtual_node){
-            cur=cur.getLeft();
+        else if(this.root.getHeight()==t.root.getHeight()){
+            x.setRight(biggertree.root);
+            x.setLeft(smallertree.root);
+            biggertree.root.setParent(x);
+            smallertree.root.setParent(x);
+            this.min= smallertree.getMin(smallertree.root);
+            this.max= biggertree.getMax(biggertree.root);
+            this.root=x;
+            return 1;
         }
-        highertree.min=lowertree.getMin(lowertree.getRoot());
 
-        x.setLeft(lowertree.root);
-        lowertree.root.setParent(x); // root is not a root anymore... should do something?
-        cur.getParent().setLeft(x);
-        x.setParent(cur.getParent());
+        IAVLNode cur= highertree.getRoot();
+        if(this==biggertree&&this==highertree) {
+//            System.out.println("1");
+            while (cur.getHeight() > lowertree.getRoot().getHeight() && cur.getLeft() != Virtual_node) {
+                cur = cur.getLeft();
+            }
+            this.min = smallertree.getMin(smallertree.getRoot());
 
-        x.setRight(cur);
-        cur.setParent(x);
+            x.setLeft(lowertree.root);
+            lowertree.root.setParent(x); // root is not a root anymore... should do something?
+            cur.getParent().setLeft(x);
+            x.setParent(cur.getParent());
 
+            x.setRight(cur);
+            cur.setParent(x);
+
+        }
+        if (this==biggertree&&this==lowertree){
+//            System.out.println("2");
+            while (cur.getHeight() > lowertree.getRoot().getHeight() && cur.getLeft() != Virtual_node) {
+                cur = cur.getRight();
+            }
+            this.min = smallertree.getMin(smallertree.getRoot());
+            x.setLeft(cur);
+            lowertree.root.setParent(x); // root is not a root anymore... should do something?
+            cur.getParent().setRight(x);
+            x.setParent(cur.getParent());
+            x.setRight(lowertree.root);
+            cur.setParent(x);
+            this.root= highertree.root;
+
+        }
+        if (this==smallertree&&this==highertree){
+//            System.out.println("3");
+            while (cur.getHeight() > lowertree.getRoot().getHeight() && cur.getLeft() != Virtual_node) {
+                cur = cur.getRight();
+            }
+            this.max = biggertree.getMax(biggertree.getRoot());
+            x.setRight(biggertree.root);
+            lowertree.root.setParent(x); // root is not a root anymore... should do something?
+            cur.getParent().setRight(x);
+            x.setParent(cur.getParent());
+            x.setLeft(cur);
+            cur.setParent(x);
+
+        }
+
+        if (this==smallertree&&this==lowertree){
+//            System.out.println("4");
+            while (cur.getHeight() > lowertree.getRoot().getHeight() && cur.getLeft() != Virtual_node) {
+                cur = cur.getLeft();
+            }
+            this.max =biggertree.getMax(biggertree.getRoot());
+
+            x.setLeft(lowertree.root);
+            lowertree.root.setParent(x); // root is not a root anymore... should do something?
+            cur.getParent().setLeft(x);
+            x.setParent(cur.getParent());
+
+            x.setRight(cur);
+            cur.setParent(x);
+            this.root= highertree.root;
+
+        }
         x.adjustHeight();
         x.adjustSize();
-
         x.getParent().adjustSize(); // parents size didnt adjust during rotation so I added this
-
         int[] fakecounter={0};
         Rebalance(x,fakecounter);
 
