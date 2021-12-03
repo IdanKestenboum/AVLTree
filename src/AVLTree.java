@@ -672,6 +672,7 @@ public class AVLTree {
             bigger_tree.min = xSuccessor;
             bigger_tree.max = maximum;
         }
+        AVLTree[] res = {smaller_tree, bigger_tree};
 
 //        if (x_node.getRight()!=Virtual_node&&x_node.getLeft()!=Virtual_node) {
 //            System.out.println("1");
@@ -743,7 +744,7 @@ public class AVLTree {
 //            smaller_tree.join(cur.getParent().getParent(),new AVLTree(cur.getParent().getParent().getLeft(),this.getMin(cur.getParent().getParent()),this.getMax(cur.getParent().getParent().getLeft())));
 //        }
 
-        AVLTree[] res = {smaller_tree, bigger_tree};
+
         return res;
     }
     public void isolate_node(IAVLNode node){

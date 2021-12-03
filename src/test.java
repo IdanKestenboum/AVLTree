@@ -178,7 +178,7 @@ public class test {
 
             }
             System.out.println(Arrays.toString(mytree.keysToArray()));
-            res =mytree.split(5);
+            res =mytree.split(15);
         }
         System.out.println(Arrays.toString(res[0].keysToArray()));
         System.out.println(Arrays.toString(res[1].keysToArray()));
@@ -187,8 +187,8 @@ public class test {
     public static void main(String[] args) {
 //        test_join();
 //        loop_insert_check();
-        double_rot_check();
-//        test_split(false);
+        //double_rot_check();
+        test_split(false);
         //test_join();
 
 
