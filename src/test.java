@@ -91,9 +91,9 @@ public class test {
 
 
         AVLTree.IAVLNode x=tree1. new AVLNode(6,"HI");
-        System.out.println(Arrays.toString(tree1.keysToArray()));
-        tree1.join(x,tree2);
-        System.out.println(Arrays.toString(tree1.keysToArray()));
+//        System.out.println(Arrays.toString(tree1.keysToArray()));
+//        tree1.join(x,tree2);
+//        System.out.println(Arrays.toString(tree1.keysToArray()));
 
 //        System.out.println(Arrays.toString(tree2.keysToArray()));
 //        tree2.join(x,tree1);
@@ -103,9 +103,9 @@ public class test {
 //        tree3.join(x,tree4);
 //        System.out.println(Arrays.toString(tree3.keysToArray()));
 
-//        System.out.println(Arrays.toString(tree4.keysToArray()));
-//        tree4.join(x,tree3);
-//        System.out.println(Arrays.toString(tree4.keysToArray()));
+        System.out.println(Arrays.toString(tree4.keysToArray()));
+        tree4.join(x,tree3);
+        System.out.println(Arrays.toString(tree4.keysToArray()));
 //        System.out.println("**end state**");
 //        System.out.println("root is "+ tree2.getRoot().getKey());
 //        System.out.println("right is "+tree2.getRoot().getRight().getKey());
@@ -138,8 +138,21 @@ public class test {
 //        System.out.println("left left left is "+tree1.getRoot().getLeft().getLeft().getLeft().getKey());
     }
 
+    public static void test_split(){
+        AVLTree tree1=new AVLTree();
+        for(int i = 10; i < 20; i++) {
+            tree1.insert(i, "k");
+        }
+        AVLTree[] res=tree1.split(15);
+            System.out.println(res[1].getRoot().getLeft().getKey());
+
+
+
+    }
+
     public static void main(String[] args) {
-        test_join();
+        test_split();
+        //test_join();
 
 
     }

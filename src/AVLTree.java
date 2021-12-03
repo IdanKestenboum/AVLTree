@@ -27,6 +27,7 @@ public class AVLTree {
         root = node;
         this.min=new_min;
         this.max=new_max;
+        root.setParent(null);
     }
     /**
      * public boolean empty()
@@ -492,7 +493,33 @@ public class AVLTree {
      */
     public AVLTree[] split(int x)
     {
-        return null;
+        IAVLNode x_node=this.tree_position(x,false,false);
+        AVLTree smaller_tree=new AVLTree(x_node.getLeft(),this.getMin(x_node),this.getMax(this.getRoot()));
+        AVLTree bigger_tree=new AVLTree(x_node.getRight(),this.getMin(x_node.getRight()),this.getMax(this.getRoot()));
+
+        IAVLNode cur=x_node;
+        while (cur.getParent()!=null&&cur.getParent().getRight()==cur){
+            smaller_tree.join(cur.getParent(),new AVLTree(cur.getParent().getLeft(),this.getMin(cur.getParent()),this.getMax(cur.getParent().getLeft())));
+            cur=cur.getParent();
+        }
+        while (cur.getParent()!=null&&cur.getParent().getRight()!=null){
+            if (cur.getParent().getLeft()==cur&&cur.getParent().getRight()!=null){
+                cur.getParent().setLeft(Virtual_node);
+                cur.getParent().setParent(null);
+                System.out.println(cur.getParent().getKey());
+                bigger_tree.join(cur.getParent(),new AVLTree(cur.getParent().getRight(), bigger_tree.min, getMax(cur.getParent().getRight())));
+            }
+            if (cur.getParent().getParent()!=null&&cur.getParent().getParent().getLeft()!=null){
+                smaller_tree.join(cur.getParent().getParent(),new AVLTree(cur.getParent().getParent().getLeft(),this.getMin(cur.getParent().getParent().getLeft()), this.getMax(cur.getParent().getParent().getLeft())));
+            }
+            cur=cur.getParent();
+        }
+//        if (cur.getParent().getParent().getLeft()!=null){
+//            smaller_tree.join(cur.getParent().getParent(),new AVLTree(cur.getParent().getParent().getLeft(),this.getMin(cur.getParent().getParent()),this.getMax(cur.getParent().getParent().getLeft())));
+//        }
+
+       AVLTree[] res={smaller_tree,bigger_tree};
+        return res;
     }
 
     /**
@@ -531,8 +558,8 @@ public class AVLTree {
             x.setLeft(smallertree.root);
             biggertree.root.setParent(x);
             smallertree.root.setParent(x);
-            this.min= smallertree.getMin(smallertree.root);
-            this.max= biggertree.getMax(biggertree.root);
+            this.min= smallertree.min;
+            this.max= biggertree.max;
             this.root=x;
             return 1;
         }
@@ -574,7 +601,7 @@ public class AVLTree {
             while (cur.getHeight() > lowertree.getRoot().getHeight() && cur.getLeft() != Virtual_node) {
                 cur = cur.getRight();
             }
-            this.max = biggertree.getMax(biggertree.getRoot());
+            this.max = biggertree.max;
             x.setRight(biggertree.root);
             lowertree.root.setParent(x); // root is not a root anymore... should do something?
             cur.getParent().setRight(x);
@@ -586,24 +613,31 @@ public class AVLTree {
 
         if (this==smallertree&&this==lowertree){
 //            System.out.println("4");
-            while (cur.getHeight() > lowertree.getRoot().getHeight() && cur.getLeft() != Virtual_node) {
+            while (cur.getHeight() > lowertree.getRoot().getHeight() && cur.getLeft().getKey() != -1) {
                 cur = cur.getLeft();
             }
-            this.max =biggertree.getMax(biggertree.getRoot());
+            this.max =biggertree.max;
 
             x.setLeft(lowertree.root);
             lowertree.root.setParent(x); // root is not a root anymore... should do something?
-            cur.getParent().setLeft(x);
-            x.setParent(cur.getParent());
+            if (cur.getParent()!=null){
+                cur.getParent().setLeft(x);
+                x.setParent(cur.getParent());
+            }
+            else{
+
+            }
 
             x.setRight(cur);
             cur.setParent(x);
-            this.root= highertree.root;
+            this.root= x;
 
         }
         x.adjustHeight();
         x.adjustSize();
-        x.getParent().adjustSize(); // parents size didnt adjust during rotation so I added this
+        if (x.getParent()!=null){
+            x.getParent().adjustSize(); // parents size didnt adjust during rotation so I added this
+        }
         int[] fakecounter={0};
         Rebalance(x,fakecounter);
 
