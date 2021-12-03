@@ -106,42 +106,42 @@ public class AVLTree {
      *
      * @pre k not in tree
      */
-    public int insert(int k, String i) {
+    public int insert(int k, String i) {//shell function, makes node, calls inserNode(node)
         IAVLNode inserted = new AVLNode(k, i);
         return insertNode(inserted);
     }
-    private int insertNode(IAVLNode inserted){
+    private int insertNode(IAVLNode inserted){//inserts a node
         int k = inserted.getKey();
         String i = inserted.getValue();
-        if(this.root == null){
+        if(this.root == null){// if tree is empty tree inserted node
             this.root = inserted;
             this.min = inserted;
             this.max = inserted;
             return 0;
         }
-        if (search(k)!=null){
+        if (search(k)!=null){//if k in tree return -1
             return -1;
         }
-        int[] counter = {0};
+        int[] counter = {0};//counter for rebalance steps
         inserted.setRight(Virtual_node);
         inserted.setLeft(Virtual_node);
-        if (k<this.min.getKey()){
+        if (k<this.min.getKey()){//if inserted is less than current min, updates current min
             this.min=inserted;
         }
-        if (k>this.max.getKey()){
+        if (k>this.max.getKey()){//updates max
             this.max=inserted;
         }
-        IAVLNode father = tree_position(k,true, false);
-        if(father.getKey() > k){
+        IAVLNode father = tree_position(k,true, false);// gets father
+        if(father.getKey() > k){//sets as left son
             father.setLeft(inserted);
 
         }
-        if (father.getKey()<k){
+        if (father.getKey()<k){//sets as right son
             father.setRight(inserted);
         }
-        inserted.setParent(father);
+        inserted.setParent(father);//updates father
         father.adjustHeight(counter);
-        Rebalance(father,counter);
+        Rebalance(father,counter);//rebalance
         return counter[0];
     }
 
@@ -154,60 +154,60 @@ public class AVLTree {
      * A promotion/rotation counts as one re-balance operation, double-rotation is counted as 2.
      * Returns -1 if an item with key k was not found in the tree.
      */
-    public int delete(int k)
+    public int delete(int k)//finds node if in tree, returns -1 if not, if yes calls deleteNode on node.
     {
 
 //        if(this.search(k) == null) return -1;
-        IAVLNode node = this.tree_position(k, false, false);
-        if(node == null) return -1;
-        if(node.getKey() != k) return -1;
-        int[] counter = {0};
+        IAVLNode node = this.tree_position(k, false, false);//gets node
+        if(node == null) return -1;//node not in tree
+        if(node.getKey() != k) return -1;//necessary?
+        int[] counter = {0};//counter for number of rebalance steps
         this.deleteNode(node, counter);
-        return counter[0];	// to be replaced by student code
+        return counter[0];
     }
 
-    private void deleteNode(IAVLNode node, int[] counter){
+    private void deleteNode(IAVLNode node, int[] counter){//deletes node that exists in tree
         if (node == null) return;
-        if(this.size() == 1){
+        if(this.size() == 1){//if node is only node in tree, makes tree empty
             this.root = null;
             min = null;
             max = null;
 
             return;
         }
-        if(node == min) min = successor(node);
-        if(node == max) max = predecessor(node);
-        IAVLNode father = null;
-        if(node != root) {
+        if(node == min) min = successor(node);//updates min if node is min
+        if(node == max) max = predecessor(node);//updates max
+        IAVLNode father = null;//if root father is null
+        if(node != root) {//if not root, father is found
             father = node.getParent();
         }
 //        System.out.println("deleting node" + node.getKey());
         if(node.getRight() == Virtual_node) {//node is unary, has left son, or node is leaf and left son is virtual node
 //            System.out.println("by bypassing " + node.getKey() + " node was unary or leaf");
-            if(father != null) {
-                if (node.getKey() < father.getKey()) {//is left child
+            if(father != null) {//node is not root
+                if (node.getKey() < father.getKey()) {//is left child, bypasses by making son left child
                     father.setLeft(node.getLeft());
                 } else {//is right child
                     father.setRight(node.getLeft());
 
                 }
-                if (node.getLeft() != Virtual_node) {
+                if (node.getLeft() != Virtual_node) {//if not leaf updates parent of bypass
                     node.getLeft().setParent(father);
 //                    System.out.println(father.getKey() + " is now father of " + node.getLeft().getKey());
 
                 }
 //                else System.out.println( "node " + node.getKey() + " was leaf");
                 father.adjustHeight(counter);
-                Rebalance(father, counter);
+                Rebalance(father, counter);//rebalance after delete
             }
-            else{
-                if(node.getLeft() == Virtual_node){
+            else{//node is root, has only left child or is only node
+                if(node.getLeft() == Virtual_node){//is only node makes tree empty
                     root = null;
                     min = null;
                     max = null;
                 }
 
-                else{
+                else{//has left son, left son is leaf(otherwise tree is not balanced), and therefore left son becomes only node in tree
                     root = node.getLeft();
                     max = node.getLeft();
                 }
@@ -216,7 +216,7 @@ public class AVLTree {
 
         }
         else if(node.getLeft() == Virtual_node){// node is unary has right son
-            if(father != null) {
+            if(father != null) {//not root
 //                System.out.println("by bypassing " + node.getKey() + " node was unary and had only right son");
 
                 if (node.getKey() < father.getKey()) {//is left child
@@ -226,34 +226,34 @@ public class AVLTree {
                     father.setRight(node.getRight());
 
                 }
-                if(node.getRight() != Virtual_node){
+                if(node.getRight() != Virtual_node){//makes father the parent of bypass node
                     node.getRight().setParent(father);
 //                    System.out.println(father.getKey() + " is now father of " + node.getRight().getKey());
                 }
                 father.adjustHeight(counter);
-                Rebalance(father, counter);
+                Rebalance(father, counter);//rebalance after delete
             }
-            else{
+            else{//is root, has right son
                 root = node.getRight();
                 min = node.getRight();
             }
         }
-        else {
+        else {//node has two sons, gets predecessor(=>replacement), deletes predecessor but holds node as replacement, replaces node to be deleted with replacement
 //            System.out.println("node has two sons");
 
 
-            IAVLNode replacement = predecessor(node);
-            boolean replacement_is_min = false;
-            if(replacement == min) replacement_is_min = true;
+            IAVLNode replacement = predecessor(node);//hold predecessor as replacement
+            boolean replacement_is_min = false;//assume not min
+            if(replacement == min) replacement_is_min = true;//check if min for special case(*)
 //            System.out.println("replacement is " + replacement.getKey());
-            deleteNode(replacement, counter);
-            if (replacement_is_min) min = replacement;
-            father = null;
-            if(node != root) {
+            deleteNode(replacement, counter);//deletes predecessor, calls recursively on deleteNode, this time we will stop at unary or leaf node
+            if (replacement_is_min) min = replacement;//(*)update min after deletion, in special case that replacement is min, node is successor of min and will be updated to min but deleted, so we must update min
+            father = null;//assume root
+            if(node != root) {//if not root get father of node to be replaced
                 father = node.getParent();
             }
             else root = replacement;
-            IAVLNode left = node.getLeft();
+            IAVLNode left = node.getLeft();//get left and right of node to be replaced
             IAVLNode right = node.getRight();
 //            if(father != null) System.out.println("father: " + father.getKey() +", left is: " + left.getKey() + ", right is : " + right.getKey());
 //            else System.out.println("deleting root, left is: " + left.getKey() + ", right is : " + right.getKey());
@@ -267,14 +267,14 @@ public class AVLTree {
 
                 }
             }
-            replacement.setRight(right);//left and right are not virtual, otherwise wouldnt get to this
-            right.setParent(replacement);
+            replacement.setRight(right);
+            if(right != Virtual_node) right.setParent(replacement);//in extreme case that predecessor is deleted, tree is rebalanced and node is moved to have a a virtual node
             replacement.setLeft(left);
-            left.setParent(replacement);//node is replaced
+            if(left != Virtual_node) left.setParent(replacement);//same a above
             replacement.setHeight(node.getHeight());//make height that of deleted
-            int prev = counter[0];
+//            int prev = counter[0];
             replacement.adjustHeight(counter);//update height as part of rebalance
-            int post = counter[0];
+//            int post = counter[0];
 //            System.out.println((post-prev) + "diff");
             replacement.adjustSize();//update size as part of rebalance, might be unnecessary
 //            if(root == node)System.out.println(node.getKey() + " is root");
