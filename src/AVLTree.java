@@ -108,6 +108,11 @@ public class AVLTree {
      */
     public int insert(int k, String i) {
         IAVLNode inserted = new AVLNode(k, i);
+        return insertNode(inserted);
+    }
+    private int insertNode(IAVLNode inserted){
+        int k = inserted.getKey();
+        String i = inserted.getValue();
         if(this.root == null){
             this.root = inserted;
             this.min = inserted;
@@ -636,19 +641,36 @@ public class AVLTree {
             IAVLNode biggerRoot = x_node.getRight().isRealNode() ?  x_node.getRight() : null;
             IAVLNode xPredecessor = predecessor(x_node);
             IAVLNode xSuccessor =  successor(x_node);
-            smaller_tree = new AVLTree(smallerRoot, this.min, xPredecessor);
-            bigger_tree = new AVLTree(biggerRoot, xSuccessor, this.max);
+            IAVLNode new_min = null;
+            IAVLNode xpre = xPredecessor;
+            IAVLNode xsuc = xSuccessor;
+            if(smallerRoot != null){
+                new_min = getMin(smallerRoot);
+            }
+            else {
+                xpre = null;
+            }
+            IAVLNode new_max = null;
+            if(biggerRoot != null){
+                new_max = getMax(biggerRoot);
+            }
+            else{
+                xsuc = null;
+            }
+            smaller_tree = new AVLTree(smallerRoot, new_min, xpre);
+            bigger_tree = new AVLTree(biggerRoot, xsuc, new_max);
+
+            IAVLNode node = x_node;
+            IAVLNode parent = node.getParent();
 
             isolate_node(x_node);
             x_node.adjustHeight();
             x_node.adjustSize();
 
-            IAVLNode node = x_node;
-            IAVLNode parent = node.getParent();
             while (parent != null) {
                 AVLTree tree;
                 IAVLNode otherSon;
-                if (parent.getKey() > node.getKey()) {
+                if (parent.getKey() > node.getKey()) {//is left son
                     otherSon =  parent.getRight();
                     tree = bigger_tree;
                 } else {
@@ -657,11 +679,20 @@ public class AVLTree {
                 }
                 node = parent;
                 parent = parent.getParent(); // so i'll move up in cases I insert parent down the tree
+                System.out.println("node is: ");
+                node.printNode();
+                System.out.println("other son is: ");
+                otherSon.printNode();
+                if(tree.root!=null) {
+                    System.out.println("tree is: ");
+                    tree.root.printNode();
+                }
+//                if(parent != null) parent.printNode();
                 isolate_node(node);
                 node.adjustSize();
                 node.adjustHeight();
                 if (otherSon.isRealNode()) {
-                    tree.join(node, new AVLTree(otherSon, otherSon, otherSon));
+                    tree.join(node, new AVLTree(otherSon, getMin(otherSon), getMax(otherSon)));
                 }
                 else{
                     tree.join(node, new AVLTree());
@@ -764,6 +795,17 @@ public class AVLTree {
      * postcondition: none
      */
     public int join(IAVLNode x, AVLTree t) {
+        if (t.empty()) {
+            insertNode(x);
+            return root.getHeight();
+        }
+        if(this.empty()){
+            t.insertNode(x);
+            root = t.getRoot();
+            max=t.max;
+            min=t.min;
+            return root.getHeight();
+        }
         AVLTree biggertree;
         AVLTree smallertree;
         if (x.getKey()<this.min.getKey()){
@@ -1011,8 +1053,9 @@ public class AVLTree {
         public int getHeight() {return this.height;}
         public int getBF(){return (this.right_son.getHeight()-this.left_son.getHeight());} //Yotam Switched these
         public void printNode(){
-            if(father_node != root)System.out.println("printing node: " + key + "\n father: " + father_node.getKey() + "father height: " + father_node.getHeight() + " left: " + left_son.getKey()
+            if(father_node != null)System.out.println("printing node: " + key + "\nfather: " + father_node.getKey() + "father height: " + father_node.getHeight() + " left: " + left_son.getKey()
                     + "left height: " + left_son.getHeight() + " right: " + right_son.getKey() + "right height: " + right_son.getHeight());
+            else{System.out.println("is root: " + key);}
         }
     }
 

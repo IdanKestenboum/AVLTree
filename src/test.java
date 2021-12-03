@@ -154,11 +154,10 @@ public class test {
     }
 
     public static void test_split(boolean random) {
-        AVLTree mytree = new AVLTree();
         AVLTree[] res={};
         if (random){
             for (int j = 0; j < 10; j++) {
-
+                AVLTree mytree = new AVLTree();
                 List<Integer> keys = IntStream.rangeClosed(1, 1000000).boxed().collect(Collectors.toList());
 
                 Collections.shuffle(keys);
@@ -172,15 +171,20 @@ public class test {
 
             }
         }
-        else{
-            for (int j = 10; j < 19; j++) {
-                mytree.insert(j,"k");
-
-            }
-            System.out.println(Arrays.toString(mytree.keysToArray()));
-            res =mytree.split(15);
-        }
-        System.out.println(Arrays.toString(res[0].keysToArray()));
+//        else{
+//            for (int j = 5; j < 19; j++) {
+//                mytree.insert(j,"k");
+//
+//            }
+//            System.out.println(Arrays.toString(mytree.keysToArray()));
+//            res =mytree.split(15);
+//        }
+//        System.out.println(Arrays.toString(res[0].keysToArray()));
+//        AVLTree.IAVLNode curr= mytree.getMin(mytree.getRoot());
+////        while(curr != null){
+////            System.out.println(curr.getKey() +" curr");
+////            curr = mytree.successor(curr);
+////        }
         System.out.println(Arrays.toString(res[1].keysToArray()));
     }
 
@@ -188,7 +192,7 @@ public class test {
 //        test_join();
 //        loop_insert_check();
         //double_rot_check();
-        test_split(false);
+        test_split(true);
         //test_join();
 
 
