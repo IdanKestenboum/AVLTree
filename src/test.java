@@ -188,8 +188,8 @@ public class test {
     public static void main(String[] args) {
 //        test_join();
 //        loop_insert_check();
-        //double_rot_check();
-        test_split(false);
+        double_rot_check();
+//        test_split(false);
         //test_join();
 
 

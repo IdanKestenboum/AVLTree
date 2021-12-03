@@ -152,6 +152,7 @@ public class AVLTree {
 
 //        if(this.search(k) == null) return -1;
         IAVLNode node = this.tree_position(k, false, false);
+        if(node == null) return -1;
         if(node.getKey() != k) return -1;
         int[] counter = {0};
         this.deleteNode(node, counter);
@@ -283,8 +284,7 @@ public class AVLTree {
      * or null if the tree is empty.
      */
     public String min() {
-
-
+        if(min == null) return null;
         return this.min.getValue();
     }
 
@@ -296,6 +296,7 @@ public class AVLTree {
      */
     public String max()
     {
+        if(max == null) return null;
         return this.max.getValue();
     }
 
