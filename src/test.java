@@ -173,13 +173,12 @@ public class test {
             }
         }
         else{
-            for (int j = 0; j < 10; j++) {
+            for (int j = 10; j < 19; j++) {
                 mytree.insert(j,"k");
 
             }
             System.out.println(Arrays.toString(mytree.keysToArray()));
             res =mytree.split(5);
-            //System.out.println(res[0].getRoot().getKey());
         }
         System.out.println(Arrays.toString(res[0].keysToArray()));
         System.out.println(Arrays.toString(res[1].keysToArray()));
