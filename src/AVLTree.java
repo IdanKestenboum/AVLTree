@@ -379,7 +379,7 @@ public class AVLTree {
         }
         return y;
     }
-//    private IAVLNode deletePredecessor(IAVLNode node, int[] counter){
+    //    private IAVLNode deletePredecessor(IAVLNode node, int[] counter){
 //        if(node.getLeft() != Virtual_node){//not virtual
 //            node.deleteSizeUpdate();
 //            IAVLNode x = getMaxDelete(node.getLeft());
@@ -611,52 +611,88 @@ public class AVLTree {
      * precondition: search(x) != null (i.e. you can also assume that the tree is not empty)
      * postcondition: none
      */
-    public AVLTree[] split(int x)
-    {
+    public AVLTree[] split(int x) {
         IAVLNode x_node=this.tree_position(x,false,false);
         AVLTree smaller_tree=null;
         AVLTree bigger_tree=null;
         if (x_node.getRight()!=Virtual_node&&x_node.getLeft()!=Virtual_node) {
             System.out.println("1");
-             smaller_tree = new AVLTree(x_node.getLeft(), this.getMin(x_node), predecessor(x_node));
-             bigger_tree = new AVLTree(x_node.getRight(), successor(x_node), this.max);
+            smaller_tree = new AVLTree(x_node.getLeft(), this.getMin(x_node), predecessor(x_node));
+            bigger_tree = new AVLTree(x_node.getRight(), successor(x_node), this.max);
         }
         else if (x_node.getRight()!=null){
             System.out.println("2");
-             smaller_tree = new AVLTree();
-             bigger_tree = new AVLTree(x_node.getRight(), successor(x_node), this.max);
+            smaller_tree = new AVLTree();
+            bigger_tree = new AVLTree(x_node.getRight(), successor(x_node), this.max);
 
         }
         else if( x_node.getLeft()!=null){
             System.out.println("3");
-         smaller_tree = new AVLTree(x_node.getLeft(), this.getMin(x_node), predecessor(x_node));
-         bigger_tree = new AVLTree();
+            smaller_tree = new AVLTree(x_node.getLeft(), this.getMin(x_node), predecessor(x_node));
+            bigger_tree = new AVLTree();
 
         }
-        IAVLNode cur=x_node;
-        while (cur.getParent()!=null&&cur.getParent().getRight()==cur){
-            smaller_tree.join(cur.getParent(),new AVLTree(cur.getParent().getLeft(),this.getMin(cur.getParent()),this.getMax(cur.getParent().getLeft())));
-            cur=cur.getParent();
-        }
-        while (cur.getParent()!=null&&cur.getParent().getRight()!=null){
-            if (cur.getParent().getParent()!=null&&cur.getParent().getParent().getLeft()!=null){
+        IAVLNode cur = x_node;
+        while (cur.getParent() != null) {//while not root
+            IAVLNode temp = cur.getParent();
+            if (cur.getParent().getRight() == cur) {
+                IAVLNode new_root = temp.getLeft();
+                new_root.setParent(null);
+                isolate_node(temp);
+                if(temp.getLeft().isRealNode()) {
+                    smaller_tree.join(temp, new AVLTree(new_root,getMin(temp.getLeft()),predecessor(temp)));
+                }else{
+                    smaller_tree.join(temp, new AVLTree());
 
-                smaller_tree.join(cur.getParent().getParent(),new AVLTree(cur.getParent().getParent().getLeft(),this.getMin(cur.getParent().getParent().getLeft()), this.getMax(cur.getParent().getParent().getLeft())));
+                }
+                cur = temp;
+            } else if (cur.getParent().getLeft() == cur) {
+                IAVLNode new_root = temp.getRight();
+                new_root.setParent(null);
+                isolate_node(temp);
+                System.out.println("here");
+                if(temp.getRight().isRealNode()) {
+                    bigger_tree.join(temp, new AVLTree(new_root, successor(temp), getMax(temp.getRight())));
+                }
+                else{
+                    bigger_tree.join(temp, new AVLTree());
+
+                }
+                cur = temp;
+
             }
-            if (cur.getParent().getLeft()==cur&&cur.getParent().getRight()!=null){
-                cur.getParent().setLeft(Virtual_node);
-                cur.getParent().setParent(null);
-                bigger_tree.join(cur.getParent(),new AVLTree(cur.getParent().getRight(), bigger_tree.min, getMax(cur.getParent().getRight())));
-            }
-
-            cur=cur.getParent();
         }
+
+
+//        while (cur.getParent()!=null&&cur.getParent().getRight()==cur){
+//            smaller_tree.join(cur.getParent(),new AVLTree(cur.getParent().getLeft(),this.getMin(cur.getParent()),this.getMax(cur.getParent().getLeft())));
+//            cur=cur.getParent();
+//        }
+//        while (cur.getParent()!=null&&cur.getParent().getRight()!=null){
+//            if (cur.getParent().getParent()!=null&&cur.getParent().getParent().getLeft()!=null){
+//
+//                smaller_tree.join(cur.getParent().getParent(),new AVLTree(cur.getParent().getParent().getLeft(),this.getMin(cur.getParent().getParent().getLeft()), this.getMax(cur.getParent().getParent().getLeft())));
+//            }
+//            if (cur.getParent().getLeft()==cur&&cur.getParent().getRight()!=null){
+//                cur.getParent().setLeft(Virtual_node);
+//                cur.getParent().setParent(null);
+//                bigger_tree.join(cur.getParent(),new AVLTree(cur.getParent().getRight(), bigger_tree.min, getMax(cur.getParent().getRight())));
+//            }
+//
+//            cur=cur.getParent();
+//        }
 //        if (cur.getParent().getParent().getLeft()!=null){
 //            smaller_tree.join(cur.getParent().getParent(),new AVLTree(cur.getParent().getParent().getLeft(),this.getMin(cur.getParent().getParent()),this.getMax(cur.getParent().getParent().getLeft())));
 //        }
 
-       AVLTree[] res={smaller_tree,bigger_tree};
+        AVLTree[] res = {smaller_tree, bigger_tree};
         return res;
+    }
+    public void isolate_node(IAVLNode node){
+        node.setLeft(Virtual_node);
+        node.setRight(Virtual_node);
+        node.adjustSize();
+        node.adjustHeight();
     }
 
     /**
@@ -917,7 +953,7 @@ public class AVLTree {
         public int getBF(){return (this.right_son.getHeight()-this.left_son.getHeight());} //Yotam Switched these
         public void printNode(){
             if(father_node != root)System.out.println("printing node: " + key + "\n father: " + father_node.getKey() + "father height: " + father_node.getHeight() + " left: " + left_son.getKey()
-            + "left height: " + left_son.getHeight() + " right: " + right_son.getKey() + "right height: " + right_son.getHeight());
+                    + "left height: " + left_son.getHeight() + " right: " + right_son.getKey() + "right height: " + right_son.getHeight());
         }
     }
 
