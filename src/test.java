@@ -43,15 +43,30 @@ public class test {
 
         for (int j = 0; j < 10; j++) {
             AVLTree mytree = new AVLTree();
-            List<Integer> keys = IntStream.rangeClosed(1, 1000000).boxed().collect(Collectors.toList());
+            List<Integer> keys = IntStream.rangeClosed(1, 10000).boxed().collect(Collectors.toList());
 
             Collections.shuffle(keys);
 //            System.out.println(keys.toString());
             for (int i : keys) {
                 mytree.insert(i, "k");
+//                System.out.println(i +"");
+                mytree.keysToArray();
+
+            }
+            System.out.println("**end state, start of deletion**");
+            Collections.shuffle(keys);
+//            System.out.println(keys.toString());
+            System.out.println("root " + mytree.getRoot().getKey() + " right son " + mytree.getRoot().getRight().getKey()+"left son"+mytree.getRoot().getLeft().getKey());
+            System.out.println("right left son is:"+mytree.getRoot().getRight().getLeft().getKey() );
+            int num = 1;
+            for (int i : keys) {
+
+//                System.out.println("deleting key " + i + "deletion number " + num);
+                mytree.delete(i);
+                mytree.keysToArray();
+                num ++;
             }
             System.out.println("**end state**");
-            mytree.keysToArray();
 //            System.out.println(Arrays.toString(mytree.keysToArray()));
 //            System.out.println(Arrays.toString(mytree.infoToArray()));
         }
@@ -139,7 +154,9 @@ public class test {
     }
 
     public static void main(String[] args) {
-        test_join();
+//        test_join();
+//        loop_insert_check();
+        double_rot_check();
 
 
     }
