@@ -292,29 +292,29 @@ class DebugTest {
         }
     }
 
-//    public static void testSplit(List<Integer> keys, AVLTree tree, AVLTree debug_tree) {
-//        Random random  = new Random();
-//        int splitKey = keys.get(random.nextInt(keys.size()));
-//        int smallerAmount = 0, biggerAmount = 0;
-//        for (int key : keys) {
-//            if (key < splitKey) smallerAmount++;
-//            if (key > splitKey) biggerAmount++;
-//        }
-//        //System.out.println(tree.getRoot());
-//        AVLTree[] splitParts = tree.split(splitKey);
-//
-//        //assert splitParts[0].size() == smallerAmount : "smaller tree wrong size when splitting by " + splitKey;
-//        //assert splitParts[1].size() == biggerAmount : "bigger tree wrong size when splitting by " + splitKey;
-//        if (splitParts[0].size() != smallerAmount)
-//            System.out.println("put breakpoint here");
-//        else if (splitParts[1].size() != biggerAmount)
-//            System.out.println("put breakpoint here");
-//        else if (!assertOnTree(splitParts[0], "on smaller tree when splitting by " + splitKey))
-//            System.out.println("put breakpoint here");
-//        else if (!assertOnTree(splitParts[1], "on bigger tree when splitting by " + splitKey))
-//            System.out.println("put breakpoint here");
-//        debug_tree.split(splitKey);
-//    }
+    public static void testSplit(List<Integer> keys, AVLTree tree, AVLTree debug_tree) {
+        Random random  = new Random();
+        int splitKey = keys.get(random.nextInt(keys.size()));
+        int smallerAmount = 0, biggerAmount = 0;
+        for (int key : keys) {
+            if (key < splitKey) smallerAmount++;
+            if (key > splitKey) biggerAmount++;
+        }
+        //System.out.println(tree.getRoot());
+        AVLTree[] splitParts = tree.split(splitKey);
+
+        //assert splitParts[0].size() == smallerAmount : "smaller tree wrong size when splitting by " + splitKey;
+        //assert splitParts[1].size() == biggerAmount : "bigger tree wrong size when splitting by " + splitKey;
+        if (splitParts[0].size() != smallerAmount)
+            System.out.println("put breakpoint here");
+        else if (splitParts[1].size() != biggerAmount)
+            System.out.println("put breakpoint here");
+        else if (!assertOnTree(splitParts[0], "on smaller tree when splitting by " + splitKey))
+            System.out.println("put breakpoint here");
+        else if (!assertOnTree(splitParts[1], "on bigger tree when splitting by " + splitKey))
+            System.out.println("put breakpoint here");
+        debug_tree.split(splitKey);
+    }
 
     public static void testRandomTree(int size) {
         AVLTree tree = new AVLTree();
@@ -327,10 +327,10 @@ class DebugTest {
         //System.out.println("-testing deletes");
         //testDeletes(keys, tree, debug_tree, (int) Math.ceil(size / 10.0));
 
-//        if (keys.size() > 0) {
-//            System.out.println("-testing split");
-//            testSplit(keys, tree, debug_tree);
-//        }
+        if (keys.size() > 0) {
+            System.out.println("-testing split");
+            testSplit(keys, tree, debug_tree);
+        }
     }
 
     public static void main(String[] args) throws InterruptedException {
@@ -338,13 +338,14 @@ class DebugTest {
 //        testRandomTree(0);
 //        System.out.println("testing tree of size 1");
 //        testRandomTree(1);
-        Random rand = new Random();
-        for (int i = 0; i < 200; i++) {
-            System.out.println(i);
-            int size = rand.nextInt(10000);
-            System.out.println("testing tree of size " + size);
-            testInsert();
-        }
+//        Random rand = new Random();
+//        for (int i = 0; i < 200; i++) {
+//            System.out.println(i);
+//            int size = rand.nextInt(10000);
+//            System.out.println("testing tree of size " + size);
+//            testInsert();
+//        }
+        //testRandomTree(10);
     }
 }
 

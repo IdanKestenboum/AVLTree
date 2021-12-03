@@ -153,23 +153,45 @@ public class test {
 //        System.out.println("left left left is "+tree1.getRoot().getLeft().getLeft().getLeft().getKey());
     }
 
-    public static void test_split(){
-        AVLTree tree1=new AVLTree();
-        for(int i = 10; i < 20; i++) {
-            tree1.insert(i, "k");
+    public static void test_split(boolean random) {
+        AVLTree mytree = new AVLTree();
+        AVLTree[] res={};
+        if (random){
+            for (int j = 0; j < 10; j++) {
+
+                List<Integer> keys = IntStream.rangeClosed(1, 1000000).boxed().collect(Collectors.toList());
+
+                Collections.shuffle(keys);
+//            System.out.println(keys.toString());
+                for (int i : keys) {
+                    mytree.insert(i, "k");
+                }
+                res = mytree.split(keys.get(15));
+
+
+
+            }
         }
-        AVLTree[] res=tree1.split(15);
-            System.out.println(res[1].getRoot().getLeft().getKey());
+        else{
+            for (int j = 0; j < 20; j++) {
+                mytree.insert(j,"k");
+
+            }
+            System.out.println(Arrays.toString(mytree.keysToArray()));
+            res =mytree.split(15);
+            System.out.println(res[0].getMin(res[0].getRoot()).getParent().getParent().getParent().getKey());
 
 
-
+        }
+        System.out.println(Arrays.toString(res[0].keysToArray()));
+        System.out.println(Arrays.toString(res[1].keysToArray()));
     }
 
     public static void main(String[] args) {
 //        test_join();
 //        loop_insert_check();
-        double_rot_check();
-        test_split();
+        //double_rot_check();
+        test_split(false);
         //test_join();
 
 

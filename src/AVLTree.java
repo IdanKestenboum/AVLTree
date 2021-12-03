@@ -614,24 +614,41 @@ public class AVLTree {
     public AVLTree[] split(int x)
     {
         IAVLNode x_node=this.tree_position(x,false,false);
-        AVLTree smaller_tree=new AVLTree(x_node.getLeft(),this.getMin(x_node),this.getMax(this.getRoot()));
-        AVLTree bigger_tree=new AVLTree(x_node.getRight(),this.getMin(x_node.getRight()),this.getMax(this.getRoot()));
+        AVLTree smaller_tree=null;
+        AVLTree bigger_tree=null;
+        if (x_node.getRight()!=Virtual_node&&x_node.getLeft()!=Virtual_node) {
+            System.out.println("1");
+             smaller_tree = new AVLTree(x_node.getLeft(), this.getMin(x_node), predecessor(x_node));
+             bigger_tree = new AVLTree(x_node.getRight(), successor(x_node), this.max);
+        }
+        else if (x_node.getRight()!=null){
+            System.out.println("2");
+             smaller_tree = new AVLTree();
+             bigger_tree = new AVLTree(x_node.getRight(), successor(x_node), this.max);
 
+        }
+        else if( x_node.getLeft()!=null){
+            System.out.println("3");
+         smaller_tree = new AVLTree(x_node.getLeft(), this.getMin(x_node), predecessor(x_node));
+         bigger_tree = new AVLTree();
+
+        }
         IAVLNode cur=x_node;
         while (cur.getParent()!=null&&cur.getParent().getRight()==cur){
             smaller_tree.join(cur.getParent(),new AVLTree(cur.getParent().getLeft(),this.getMin(cur.getParent()),this.getMax(cur.getParent().getLeft())));
             cur=cur.getParent();
         }
         while (cur.getParent()!=null&&cur.getParent().getRight()!=null){
+            if (cur.getParent().getParent()!=null&&cur.getParent().getParent().getLeft()!=null){
+
+                smaller_tree.join(cur.getParent().getParent(),new AVLTree(cur.getParent().getParent().getLeft(),this.getMin(cur.getParent().getParent().getLeft()), this.getMax(cur.getParent().getParent().getLeft())));
+            }
             if (cur.getParent().getLeft()==cur&&cur.getParent().getRight()!=null){
                 cur.getParent().setLeft(Virtual_node);
                 cur.getParent().setParent(null);
-                System.out.println(cur.getParent().getKey());
                 bigger_tree.join(cur.getParent(),new AVLTree(cur.getParent().getRight(), bigger_tree.min, getMax(cur.getParent().getRight())));
             }
-            if (cur.getParent().getParent()!=null&&cur.getParent().getParent().getLeft()!=null){
-                smaller_tree.join(cur.getParent().getParent(),new AVLTree(cur.getParent().getParent().getLeft(),this.getMin(cur.getParent().getParent().getLeft()), this.getMax(cur.getParent().getParent().getLeft())));
-            }
+
             cur=cur.getParent();
         }
 //        if (cur.getParent().getParent().getLeft()!=null){
@@ -651,7 +668,7 @@ public class AVLTree {
      * precondition: keys(t) < x < keys() or keys(t) > x > keys(). t/tree might be empty (rank = -1).
      * postcondition: none
      */
-    public int join(IAVLNode x, AVLTree t) {//TODO complete symmetry of operations and inserting tree with bigger/smaller keys
+    public int join(IAVLNode x, AVLTree t) {
         AVLTree biggertree;
         AVLTree smallertree;
         if (x.getKey()<this.min.getKey()){
@@ -693,7 +710,7 @@ public class AVLTree {
             this.min = smallertree.getMin(smallertree.getRoot());
 
             x.setLeft(lowertree.root);
-            lowertree.root.setParent(x); // root is not a root anymore... should do something?
+            lowertree.root.setParent(x);
             cur.getParent().setLeft(x);
             x.setParent(cur.getParent());
 
@@ -708,7 +725,7 @@ public class AVLTree {
             }
             this.min = smallertree.getMin(smallertree.getRoot());
             x.setLeft(cur);
-            lowertree.root.setParent(x); // root is not a root anymore... should do something?
+            lowertree.root.setParent(x);
             cur.getParent().setRight(x);
             x.setParent(cur.getParent());
             x.setRight(lowertree.root);
@@ -723,7 +740,7 @@ public class AVLTree {
             }
             this.max = biggertree.max;
             x.setRight(biggertree.root);
-            lowertree.root.setParent(x); // root is not a root anymore... should do something?
+            lowertree.root.setParent(x);
             cur.getParent().setRight(x);
             x.setParent(cur.getParent());
             x.setLeft(cur);
@@ -739,7 +756,7 @@ public class AVLTree {
             this.max =biggertree.max;
 
             x.setLeft(lowertree.root);
-            lowertree.root.setParent(x); // root is not a root anymore... should do something?
+            lowertree.root.setParent(x);
             if (cur.getParent()!=null){
                 cur.getParent().setLeft(x);
                 x.setParent(cur.getParent());
