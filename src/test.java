@@ -188,12 +188,31 @@ public class test {
         System.out.println(Arrays.toString(res[1].keysToArray()));
     }
 
+    public static void Q_2(){
+        AVLTree mytree1 = new AVLTree();
+        AVLTree mytree2 = new AVLTree();
+        List<Integer> keys = IntStream.rangeClosed(1, 1000*1024).boxed().collect(Collectors.toList());
+        Collections.shuffle(keys);
+        for (int i : keys) {
+            mytree1.insert(i, "k");
+            mytree2.insert(i, "k");
+        }
+        System.out.println("tree 1 - left max:");
+        System.out.println("height"+mytree1.getRoot().getHeight());
+        mytree1.split(mytree1.getMax(mytree1.getRoot().getLeft()).getKey());
+        System.out.println("tree 2 - random:");
+        mytree2.split(mytree2.tree_position(100,false,false).getKey());
+
+
+    }
+
     public static void main(String[] args) {
 //        test_join();
 //        loop_insert_check();
         //double_rot_check();
-        test_split(true);
+        //test_split(true);
         //test_join();
+        Q_2();
 
 
     }
