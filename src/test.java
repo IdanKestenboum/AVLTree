@@ -191,7 +191,7 @@ public class test {
     public static void Q_2(){
         AVLTree mytree1 = new AVLTree();
         AVLTree mytree2 = new AVLTree();
-        List<Integer> keys = IntStream.rangeClosed(1, 1000*1024).boxed().collect(Collectors.toList());
+        List<Integer> keys = IntStream.rangeClosed(1, 1000*32).boxed().collect(Collectors.toList());
         Collections.shuffle(keys);
         for (int i : keys) {
             mytree1.insert(i, "k");
