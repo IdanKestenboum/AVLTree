@@ -43,7 +43,7 @@ public class test {
 
         for (int j = 0; j < 10; j++) {
             AVLTree mytree = new AVLTree();
-            List<Integer> keys = IntStream.rangeClosed(1, 10000).boxed().collect(Collectors.toList());
+            List<Integer> keys = IntStream.rangeClosed(1, 100).boxed().collect(Collectors.toList());
 
             Collections.shuffle(keys);
 //            System.out.println(keys.toString());
@@ -104,19 +104,19 @@ public class test {
             tree4.insert(i, "k");
         }
 
-
+        AVLTree null_tree = new AVLTree();
         AVLTree.IAVLNode x=tree1. new AVLNode(6,"HI");
 //        System.out.println(Arrays.toString(tree1.keysToArray()));
-//        tree1.join(x,tree2);
-//        System.out.println(Arrays.toString(tree1.keysToArray()));
+        null_tree.join(x,tree2);
+        System.out.println(Arrays.toString(null_tree.keysToArray()));
 
 //        System.out.println(Arrays.toString(tree2.keysToArray()));
 //        tree2.join(x,tree1);
 //        System.out.println(Arrays.toString(tree2.keysToArray()));
 
-//        System.out.println(Arrays.toString(tree3.keysToArray()));
-//        tree3.join(x,tree4);
-//        System.out.println(Arrays.toString(tree3.keysToArray()));
+        System.out.println(Arrays.toString(tree3.keysToArray()));
+        tree3.join(x,null_tree);
+        System.out.println("3" + Arrays.toString(tree3.keysToArray()));
 
         System.out.println(Arrays.toString(tree4.keysToArray()));
         tree4.join(x,tree3);
@@ -191,17 +191,21 @@ public class test {
     public static void Q_2(){
         AVLTree mytree1 = new AVLTree();
         AVLTree mytree2 = new AVLTree();
-        List<Integer> keys = IntStream.rangeClosed(1, 1000*32).boxed().collect(Collectors.toList());
+        List<Integer> keys = IntStream.rangeClosed(1, 10000).boxed().collect(Collectors.toList());
         Collections.shuffle(keys);
+
+        System.out.println("insert order: " + keys.toString());
+        int[] keys2 = {2, 5, 10, 3, 7, 6, 11, 12, 4, 8, 9, 1, 15, 14, 13};
         for (int i : keys) {
             mytree1.insert(i, "k");
             mytree2.insert(i, "k");
         }
         System.out.println("tree 1 - left max:");
         System.out.println("height"+mytree1.getRoot().getHeight());
+        System.out.println("split on: " + mytree1.getMax(mytree1.getRoot().getLeft()).getKey());
         mytree1.split(mytree1.getMax(mytree1.getRoot().getLeft()).getKey());
         System.out.println("tree 2 - random:");
-        mytree2.split(mytree2.tree_position(100,false,false).getKey());
+        mytree2.split(mytree2.tree_position(5,false,false).getKey());
 
 
     }
@@ -212,7 +216,7 @@ public class test {
         //double_rot_check();
         //test_split(true);
         //test_join();
-        Q_2();
+        for(int i = 0; i < 100; i++) Q_2();
 
 
     }

@@ -445,7 +445,9 @@ public class AVLTree {
     }
 
     public void Rebalance(IAVLNode node,int[] counter) { // Complexity O(log(n))
+        node.printNode();
         int BF = node.getBF();
+        System.out.println("rebalance");
         node.adjustSize();
 
         if (BF <= 1 && BF >= -1) { //balance factor is valid, but we dont know if rank difference with parent is valid
@@ -608,7 +610,7 @@ public class AVLTree {
             }
             //IAVLNode root_of_bigger = x_node.getRight().isRealNode() ?  x_node.getRight() : null;
             IAVLNode root_of_bigger;
-            if (x_node.getRight().isRealNode())
+            if (x_node.getRight().isRealNode())//get root of
             {
                 root_of_bigger=x_node.getRight();
             }
@@ -633,22 +635,21 @@ public class AVLTree {
             else{
                 xsuc = null;
             }//now after getting the required poninters, we can build the tree
-            smaller_tree = new AVLTree(root_of_smaller, new_min, xpre);
-            bigger_tree = new AVLTree(root_of_bigger, xsuc, new_max);
+            smaller_tree = new AVLTree(root_of_smaller, new_min, xpre);//if subtree empty, all values will be null, else new tree with minimum being the min of subroot, and max being predeessor of x
+            bigger_tree = new AVLTree(root_of_bigger, xsuc, new_max);//same for bigger subtree
 
             IAVLNode node = x_node;
             IAVLNode parent = node.getParent();
 
             isolate_node(x_node);
-            x_node.adjustHeight();
-            x_node.adjustSize();
 
-            while (parent != null) {
-                AVLTree tree;
-                IAVLNode otherSon;
+
+            while (parent != null) {//while not at root
+                AVLTree tree;//make an avl tree
+                IAVLNode otherSon;//make avl node for holding other son
                 if (parent.getKey() > node.getKey()) {//is left son
-                    otherSon =  parent.getRight();
-                    tree = bigger_tree;
+                    otherSon =  parent.getRight();//other son is right son
+                    tree = bigger_tree;//subtree is bigger will be added to bigger tree
                 } else {
                     otherSon = parent.getLeft();
                     tree = smaller_tree;
@@ -663,10 +664,21 @@ public class AVLTree {
                  //   tree.root.printNode();
                 //}
                 isolate_node(node);
-                node.adjustSize();
-                node.adjustHeight();
-                if (otherSon.isRealNode()) {
+//                node.adjustSize();
+//                node.adjustHeight();
+                if (otherSon.isRealNode()) {//we
+                    System.out.println("hello there: " + otherSon.getKey());
+                    System.out.println("node: ");
+                    node.printNode();
+                    System.out.println("other son: ");
+                    otherSon.printNode();
+                    System.out.println("tree root: ");
+                    if (tree.root!=null) tree.root.printNode();
+                    else  System.out.println("null");
+                    otherSon.setParent(null);
+
                     int temp=tree.join(node, new AVLTree(otherSon, getMin(otherSon), getMax(otherSon)));
+                    System.out.println("general kenobi");
                     operation_counter+=temp;
                     num_counter+=1;
                     if (temp>max_pointer){
@@ -674,7 +686,9 @@ public class AVLTree {
                     }
                 }
                 else{
-                    int temp=tree.join(node, new AVLTree());
+                    System.out.println("you were supposed to bring balance to the force");
+                    int temp=tree.insertNode(node);
+                    System.out.println("not leave it in darkness");
                     operation_counter+=temp;
                     num_counter+=1;
                     if (temp>max_pointer){
@@ -695,6 +709,7 @@ public class AVLTree {
     public void isolate_node(IAVLNode node){ //disconnects node from its sons - complexity - O(1)
         node.setLeft(Virtual_node);
         node.setRight(Virtual_node);
+        node.setParent(null);
         node.adjustSize();
         node.adjustHeight();
     }
@@ -709,127 +724,169 @@ public class AVLTree {
      * postcondition: none
      */
     public int join(IAVLNode x, AVLTree t) {
-        if (t.empty()) {
+        if (t.empty()) {//if t is empty we just insert new node, works if both are empty
             insertNode(x);
             return root.getHeight();
         }
-        if(this.empty()){
+        else if(this.empty()){//if this is empty (t is not empty) we insert new node to t, make this t
             t.insertNode(x);
             root = t.getRoot();
             max=t.max;
             min=t.min;
             return root.getHeight();
         }
+        //both trees are not empty
         AVLTree biggertree;
         AVLTree smallertree;
-        if (x.getKey()<this.min.getKey()){
+        if (x.getKey()<this.min.getKey()){//x is smaller than all leaves in this
             biggertree=this;
             smallertree=t;
         }
-        else{
+        else{//x is bigger than this
             biggertree=t;
             smallertree=this;
         }
         AVLTree highertree=null;
         AVLTree lowertree=null;
-
+        //find lower tree
         if (this.root.getHeight()>t.root.getHeight()){
             highertree=this;
             lowertree=t;
         }
-        if(t.root.getHeight()>this.root.getHeight()){
+        else if(t.root.getHeight()>this.root.getHeight()){
             highertree=t;
             lowertree=this;
         }
-        else if(this.root.getHeight()==t.root.getHeight()){
+        if(this.root.getHeight()==t.root.getHeight() || Math.abs(this.root.getHeight()-t.root.getHeight()) == 1){//if trees are same height
             x.setRight(biggertree.root);
             x.setLeft(smallertree.root);
             biggertree.root.setParent(x);
             smallertree.root.setParent(x);
+            x.adjustHeight();
+            x.adjustSize();
             this.min= smallertree.min;
             this.max= biggertree.max;
             this.root=x;
             return 1;
         }
+        System.out.println("LETS SEE " + Math.abs(this.root.getHeight()-t.root.getHeight()));
 
+
+        int returned = Math.abs(this.getRoot().getHeight()-t.getRoot().getHeight())+1;
         IAVLNode cur= highertree.getRoot();
-        if(this==biggertree&&this==highertree) {
+        this.min = smallertree.min;
+        this.max = biggertree.max;
+
+        if(biggertree==highertree) {//bigger is higher
 //            System.out.println("1");
-            while (cur.getHeight() > lowertree.getRoot().getHeight() && cur.getLeft() != Virtual_node) {
+            while (cur.getHeight() > lowertree.getRoot().getHeight() && cur.getLeft().getKey() != -1) {// get first node that is lower than or equal to lower tree height
                 cur = cur.getLeft();
             }
-            this.min = smallertree.getMin(smallertree.getRoot());
+            System.out.println("printing split cur");
+            System.out.println(cur.getKey() + " key");
+            cur.printNode();
+            if (cur.getHeight() == 0) System.out.println("leaf 1 " + lowertree.root.getHeight());
+//            this.min = smallertree.min;
+//            this.max = biggertree.max;
+            x.setLeft(lowertree.root);//make left son smaller tree
+            lowertree.root.setParent(x);//make x father of smaller tree
+//            cur.getParent().setLeft(x);//get parent of right subtree make x son of that node
+            if(cur.getParent()!=null) {
+                System.out.println("shouldn't get here1");
+                cur.getParent().setLeft(x);//make father of subtree have x as son
+                x.setParent(cur.getParent());//make that node be parent of x
 
-            x.setLeft(lowertree.root);
-            lowertree.root.setParent(x);
-            cur.getParent().setLeft(x);
-            x.setParent(cur.getParent());
-
-            x.setRight(cur);
-            cur.setParent(x);
-
+            }
+            x.setRight(cur);//set right son of x to be right subtree
+            cur.setParent(x);//set x as parent of right subtree
+            //tree is joined, not necessarily balanced
+//            System.out.println("AFTER JOIN before rebalance");
+//            x.printNode();
+//            cur.printNode();
+//            cur.getParent().printNode();
+//            x.getLeft().printNode();
         }
-        if (this==biggertree&&this==lowertree){
+        if (biggertree==lowertree){//bigger is lower
 //            System.out.println("2");
-            while (cur.getHeight() > lowertree.getRoot().getHeight() && cur.getLeft() != Virtual_node) {
+            while (cur.getHeight() > lowertree.getRoot().getHeight() && cur.getRight().getKey() != -1) {//get first node that is lower than or equal to lower tree height
                 cur = cur.getRight();
             }
-            this.min = smallertree.getMin(smallertree.getRoot());
-            x.setLeft(cur);
-            lowertree.root.setParent(x);
-            cur.getParent().setRight(x);
-            x.setParent(cur.getParent());
-            x.setRight(lowertree.root);
+            if (cur.getHeight() == 0) System.out.println("leaf 2 " + lowertree.root.getHeight());
+
+//            this.min = smallertree.min;//this is bigger so we take min of smaller
+            x.setLeft(cur);//x left is subtree of higher tree, left because x is bigger
+            x.setRight(lowertree.root);//make x have lower tree as right son(lower tree is bigger in this case)
+            if(cur.getParent()!=null) {
+                System.out.println("shouldn't get here2");
+//                cur.printNode();
+                cur.getParent().setRight(x);//make father of subtree have x as son
+                x.setParent(cur.getParent());//make father of subtree father of x
+
+            }
+            lowertree.root.setParent(x);//make lower tree parent x
+
             cur.setParent(x);
-            this.root= highertree.root;
+//            System.out.println("AFTER JOIN before rebalance");
+//            x.printNode();
+//            cur.printNode();
+//            cur.getParent().printNode();
+//            x.getLeft().printNode();
+
+//        }
+//        if (this==smallertree&&this==highertree){
+////            System.out.println("3");
+//            while (cur.getHeight() > lowertree.getRoot().getHeight() && cur.getRight() != Virtual_node) {
+//                cur = cur.getRight();
+//            }
+//            this.max = biggertree.max;
+//            x.setRight(biggertree.root);
+//            lowertree.root.setParent(x);
+//            cur.getParent().setRight(x);
+//            x.setParent(cur.getParent());
+//            x.setLeft(cur);
+//            cur.setParent(x);
+//
+//        }
+//
+//        if (this==smallertree&&this==lowertree){
+////            System.out.println("4");
+//            while (cur.getHeight() > lowertree.getRoot().getHeight() && cur.getLeft().getKey() != -1) {
+//                cur = cur.getLeft();
+//            }
+//            this.max =biggertree.max;
+//
+//            x.setLeft(lowertree.root);
+//            lowertree.root.setParent(x);
+//            if (cur.getParent()!=null){
+//                cur.getParent().setLeft(x);
+//                x.setParent(cur.getParent());
+//            }
+//            else{
+//
+//            }
+
+//            x.setRight(cur);
+//            cur.setParent(x);
+//            this.root= x;
 
         }
-        if (this==smallertree&&this==highertree){
-//            System.out.println("3");
-            while (cur.getHeight() > lowertree.getRoot().getHeight() && cur.getLeft() != Virtual_node) {
-                cur = cur.getRight();
-            }
-            this.max = biggertree.max;
-            x.setRight(biggertree.root);
-            lowertree.root.setParent(x);
-            cur.getParent().setRight(x);
-            x.setParent(cur.getParent());
-            x.setLeft(cur);
-            cur.setParent(x);
-
-        }
-
-        if (this==smallertree&&this==lowertree){
-//            System.out.println("4");
-            while (cur.getHeight() > lowertree.getRoot().getHeight() && cur.getLeft().getKey() != -1) {
-                cur = cur.getLeft();
-            }
-            this.max =biggertree.max;
-
-            x.setLeft(lowertree.root);
-            lowertree.root.setParent(x);
-            if (cur.getParent()!=null){
-                cur.getParent().setLeft(x);
-                x.setParent(cur.getParent());
-            }
-            else{
-
-            }
-
-            x.setRight(cur);
-            cur.setParent(x);
-            this.root= x;
-
+        this.root = highertree.root;
+        if(this.root.getParent()!=null) {
+            System.out.println("found bug");
+            this.root.setParent(null);
         }
         x.adjustHeight();
         x.adjustSize();
         if (x.getParent()!=null){
             x.getParent().adjustSize(); // parents size didnt adjust during rotation so I added this
+            x.getParent().adjustHeight();
         }
+        if(x.getParent() == null) System.out.println("null found");
         int[] fakecounter={0};
-        Rebalance(x,fakecounter);
+        Rebalance(x, fakecounter);
 
-        return Math.abs(this.getRoot().getHeight()-t.getRoot().getHeight())+1;
+
+        return returned;
     }
 
     /**
@@ -930,6 +987,7 @@ public class AVLTree {
         }
         public void setHeight(int height) {this.height=height;}
         public void adjustSize(){
+//            System.out.println(key + ", right: " + right_son.getKey() + ", left: " + left_son.getKey());
             if(this != Virtual_node)this.size = this.right_son.getSize() + this.left_son.getSize() + 1;
         }
         public int getSize(){
@@ -970,7 +1028,8 @@ public class AVLTree {
         public void printNode(){
             if(father_node != null)System.out.println("printing node: " + key + "\nfather: " + father_node.getKey() + "father height: " + father_node.getHeight() + " left: " + left_son.getKey()
                     + "left height: " + left_son.getHeight() + " right: " + right_son.getKey() + "right height: " + right_son.getHeight());
-            else{System.out.println("is root: " + key);}
+            else{System.out.println("is root: " + key + " left: " + left_son.getKey()
+                    + "left height: " + left_son.getHeight() + " right: " + right_son.getKey() + "right height: " + right_son.getHeight());}
         }
     }
 
