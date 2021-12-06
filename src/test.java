@@ -191,19 +191,21 @@ public class test {
     public static void Q_2(){
         AVLTree mytree1 = new AVLTree();
         AVLTree mytree2 = new AVLTree();
-        List<Integer> keys = IntStream.rangeClosed(1, 10000).boxed().collect(Collectors.toList());
+        List<Integer> keys = IntStream.rangeClosed(1, 100).boxed().collect(Collectors.toList());
         Collections.shuffle(keys);
 
-        System.out.println("insert order: " + keys.toString());
-        int[] keys2 = {2, 5, 10, 3, 7, 6, 11, 12, 4, 8, 9, 1, 15, 14, 13};
+//        System.out.println("insert order: " + keys.toString());
+//        int[] keys2 = {2, 5, 10, 3, 7, 6, 11, 12, 4, 8, 9, 1, 15, 14, 13};
         for (int i : keys) {
             mytree1.insert(i, "k");
             mytree2.insert(i, "k");
         }
         System.out.println("tree 1 - left max:");
         System.out.println("height"+mytree1.getRoot().getHeight());
-        System.out.println("split on: " + mytree1.getMax(mytree1.getRoot().getLeft()).getKey());
-        mytree1.split(mytree1.getMax(mytree1.getRoot().getLeft()).getKey());
+        int d = mytree1.getMax(mytree1.getRoot().getLeft()).getKey();
+        System.out.println("split on: " + d);
+        AVLTree[] res = mytree1.split(mytree1.getMax(mytree1.getRoot().getLeft()).getKey());
+        System.out.println("tree 1: \nsplit on: " + d+ "  -  " + Arrays.toString(res[0].keysToArray()) + Arrays.toString(res[1].keysToArray()));
         System.out.println("tree 2 - random:");
         mytree2.split(mytree2.tree_position(5,false,false).getKey());
 
