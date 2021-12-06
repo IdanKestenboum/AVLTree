@@ -47,7 +47,7 @@ public class AVLTree {
         return false;
     }
 
-    public IAVLNode tree_position(int key, boolean is_insert, boolean is_delete){ //Complexity O(log(n))
+    public IAVLNode tree_position(int key){ //Complexity O(log(n))
         IAVLNode curr = root;
         if(root == null) return null;
         IAVLNode y = curr;
@@ -57,23 +57,10 @@ public class AVLTree {
                 return curr;          //we found the key
             }
             else if (key<curr.getKey()){//need to go left, and update the height of the cur node
-                if(is_insert) {
-                    curr.insertSizeUpdate();
-                }
-                if(is_delete) {
-                    curr.deleteSizeUpdate();
-                }
                 curr=curr.getLeft();
             }
             else{
-                if(is_insert){//need to go right, and update the height of the cur node
-                    curr.insertSizeUpdate();
-                }
-                if(is_delete) {
-                    curr.deleteSizeUpdate();
-                }
                 curr=curr.getRight();
-
             }
         }
         return y;
@@ -88,12 +75,12 @@ public class AVLTree {
     public String search(int k) //calls tree_posotion method and returns the value poninter - overall Complexity O(log(n))
     {
 
-        IAVLNode res=tree_position(k,false, false);
+        IAVLNode res=tree_position(k);
         if(res == null) return null;
-        if (res.getKey()!=k){
+        if (res.getKey()!=k){//item found isnt hte item searched for
             return null;
         }
-        else{
+        else{//item found, return value
             return res.getValue();
 
         }
@@ -134,7 +121,7 @@ public class AVLTree {
         if (k>this.max.getKey()){//updates max
             this.max=inserted;
         }
-        IAVLNode father = tree_position(k,true, false);// gets father
+        IAVLNode father = tree_position(k);// gets father
         if(father.getKey() > k){//sets as left son
             father.setLeft(inserted);
 
@@ -159,9 +146,7 @@ public class AVLTree {
      */
     public int delete(int k)//finds node if in tree, returns -1 if not, if yes calls deleteNode on node. overall complexity - O(log(n))
     {
-
-//        if(this.search(k) == null) return -1;
-        IAVLNode node = this.tree_position(k, false, false);//gets node
+        IAVLNode node = this.tree_position(k);//gets node
         if(node == null) return -1;//node not in tree
         if(node.getKey() != k) return -1;//necessary?
         int[] counter = {0};//counter for number of rebalance steps
@@ -184,22 +169,16 @@ public class AVLTree {
         if(node != root) {//if not root, father is found
             father = node.getParent();
         }
-//        System.out.println("deleting node" + node.getKey());
         if(node.getRight() == Virtual_node) {//node is unary, has left son, or node is leaf and left son is virtual node
-//            System.out.println("by bypassing " + node.getKey() + " node was unary or leaf");
             if(father != null) {//node is not root
                 if (node.getKey() < father.getKey()) {//is left child, bypasses by making son left child
                     father.setLeft(node.getLeft());
                 } else {//is right child
                     father.setRight(node.getLeft());
-
                 }
                 if (node.getLeft() != Virtual_node) {//if not leaf updates parent of bypass
                     node.getLeft().setParent(father);
-//                    System.out.println(father.getKey() + " is now father of " + node.getLeft().getKey());
-
                 }
-//                else System.out.println( "node " + node.getKey() + " was leaf");
                 father.adjustHeight(counter);
                 Rebalance(father, counter);//rebalance after delete
             }
@@ -209,29 +188,21 @@ public class AVLTree {
                     min = null;
                     max = null;
                 }
-
                 else{//has left son, left son is leaf(otherwise tree is not balanced), and therefore left son becomes only node in tree
                     root = node.getLeft();
                     max = node.getLeft();
                 }
-
             }
-
         }
         else if(node.getLeft() == Virtual_node){// node is unary has right son
             if(father != null) {//not root
-//                System.out.println("by bypassing " + node.getKey() + " node was unary and had only right son");
-
                 if (node.getKey() < father.getKey()) {//is left child
                     father.setLeft(node.getRight());
-
                 } else {//is right child
                     father.setRight(node.getRight());
-
                 }
                 if(node.getRight() != Virtual_node){//makes father the parent of bypass node
                     node.getRight().setParent(father);
-//                    System.out.println(father.getKey() + " is now father of " + node.getRight().getKey());
                 }
                 father.adjustHeight(counter);
                 Rebalance(father, counter);//rebalance after delete
@@ -242,13 +213,9 @@ public class AVLTree {
             }
         }
         else {//node has two sons, gets predecessor(=>replacement), deletes predecessor but holds node as replacement, replaces node to be deleted with replacement
-//            System.out.println("node has two sons");
-
-
             IAVLNode replacement = predecessor(node);//hold predecessor as replacement
             boolean replacement_is_min = false;//assume not min
             if(replacement == min) replacement_is_min = true;//check if min for special case(*)
-//            System.out.println("replacement is " + replacement.getKey());
             deleteNode(replacement, counter);//deletes predecessor, calls recursively on deleteNode, this time we will stop at unary or leaf node
             if (replacement_is_min) min = replacement;//(*)update min after deletion, in special case that replacement is min, node is successor of min and will be updated to min but deleted, so we must update min
             father = null;//assume root
@@ -258,8 +225,6 @@ public class AVLTree {
             else root = replacement;
             IAVLNode left = node.getLeft();//get left and right of node to be replaced
             IAVLNode right = node.getRight();
-//            if(father != null) System.out.println("father: " + father.getKey() +", left is: " + left.getKey() + ", right is : " + right.getKey());
-//            else System.out.println("deleting root, left is: " + left.getKey() + ", right is : " + right.getKey());
             replacement.setParent(father);//now replace node by switching all the pointers
             if(father != null) {
                 if(node.getKey() < father.getKey()){//is left child
@@ -267,7 +232,6 @@ public class AVLTree {
                 }
                 else{//is right child
                     father.setRight(replacement);
-
                 }
             }
             replacement.setRight(right);
@@ -275,15 +239,8 @@ public class AVLTree {
             replacement.setLeft(left);
             if(left != Virtual_node) left.setParent(replacement);//same a above
             replacement.setHeight(node.getHeight());//make height that of deleted
-//            int prev = counter[0];
             replacement.adjustHeight(counter);//update height as part of rebalance
-//            int post = counter[0];
-//            System.out.println((post-prev) + "diff");
             replacement.adjustSize();//update size as part of rebalance, might be unnecessary
-//            if(root == node)System.out.println(node.getKey() + " is root");
-//            if(node.getSize() != replacement.getSize())System.out.println("sizes are different, node: " + node.getSize() + " replacement: " + replacement.getSize());
-//            Rebalance(replacement, counter);
-
         }
         return;
     }
@@ -322,33 +279,11 @@ public class AVLTree {
         int tree_size = size();
         int[] array = new int[tree_size];
         if(this.root == null) return array; //empty tree
-
         for(int i = 0; i < tree_size-1 ; i++){//go over all the nodes starting from min, call successor every loop and store into array
             array[i] = curr.getKey();
-            int temp = curr.getKey();
-            if(Math.abs(curr.getBF()) >1) System.out.println(curr.getKey() + " Error in BF: " + curr.getBF());
-            if(curr.getParent() != null) {
-                if (curr.getHeight() == curr.getParent().getHeight()) System.out.println(curr.getKey() + " is same height as parent: " + curr.getParent().getKey());
-            }
-            if(Math.abs(curr.getHeight()-curr.getLeft().getHeight()) >2){
-                System.out.println("left son height problem, too high");
-            }
-            if (Math.abs(curr.getHeight()-curr.getLeft().getHeight()) == 0){
-                System.out.println("left son height problem, same height");
-            }
-            if(Math.abs(curr.getHeight()-curr.getRight().getHeight()) >2){
-                System.out.println(curr.getKey() + " right son height problem, too high");
-            }
-            if((Math.abs(curr.getHeight()-curr.getRight().getHeight()) == 0)){
-                System.out.println(curr.getKey() + " right son height problem, same height");
-
-            }
             curr = successor(curr);
-            int temp2 = curr.getKey();
-            if(temp2 <= temp) System.out.println(curr.getKey() + " Error in ascending order!");
         }
         array[tree_size-1] = curr.getKey();
-//        System.out.println("good");
         return array;
     }
 
@@ -407,6 +342,7 @@ public class AVLTree {
         IAVLNode curr = this.min;
         int tree_size = this.root.getSize();
         String[] array = new String[tree_size];
+        if(this.root == null) return array; //empty tree
         for(int i = 0; i < tree_size-1 ; i++){//runs throught tree the size number of times, stops 1 before last node so that successor(max) doesnt happen
             array[i] = curr.getValue();
             curr = successor(curr);
@@ -560,7 +496,7 @@ public class AVLTree {
      * postcondition: none
      */
     public AVLTree[] split(int x) {
-        IAVLNode x_node=this.tree_position(x,false,false);
+        IAVLNode x_node=this.tree_position(x);
         AVLTree smaller_tree=null;
         AVLTree bigger_tree=null;
         IAVLNode minimum = this.min;
@@ -796,10 +732,6 @@ public class AVLTree {
         public int getBF();
         public void adjustSize();
         public int getSize();
-        public void insertSizeUpdate();
-        public void deleteSizeUpdate();
-        public void printNode();
-
     }
 
     /**
@@ -865,15 +797,8 @@ public class AVLTree {
             }
             return true;
         }
-        public void insertSizeUpdate(){
-            this.size += 1;
-        }
-        public void deleteSizeUpdate(){
-            this.size -= 1;
-        }
         public void setHeight(int height) {this.height=height;}
         public void adjustSize(){
-//            System.out.println(key + ", right: " + right_son.getKey() + ", left: " + left_son.getKey());
             if(this != Virtual_node)this.size = this.right_son.getSize() + this.left_son.getSize() + 1;
         }
         public int getSize(){
@@ -883,40 +808,16 @@ public class AVLTree {
             return this.size;
         }
         public void adjustHeight(){this.height=Integer.max(this.right_son.getHeight(),this.left_son.getHeight())+1;}
-        public void adjustHeight(int[] counter) {
+        public void adjustHeight(int[] counter) {//adjusts height, adds number of promotes/demotes
             int prev = this.height;
             this.height = Integer.max(this.right_son.getHeight(), this.left_son.getHeight()) + 1;
             int post = this.height;
             if (prev != post) {
-                //System.out.println("number of demote/promote: " + this.key + " " + (post - prev) + " height: " + height+" R "+ right_son.getKey()+ " L "+ left_son.getKey());
                 counter[0] += Math.abs(post - prev);
             }
-            if (left_son == Virtual_node || right_son == Virtual_node) {
-                //System.out.println("son is virtual");
-            }
-
-
-            if(left_son != Virtual_node) {
-                if (this.left_son.getParent() != this) {
-                    //System.out.println(this.getKey() + " should be parent of " + this.right_son.getKey()
-                     //       + " is son of " + this.right_son.getParent().getKey());
-                }
-            }
-            if(right_son != Virtual_node){
-                if(this.right_son.getParent() != this){
-                   // System.out.println(this.getKey() + " should be parent of " + this.right_son.getKey()
-                    //        + " is son of " + this.right_son.getParent().getKey());
-                }
-            }
-        }//  Yotam Added for easy promotion/demotion count
-        public int getHeight() {return this.height;}
-        public int getBF(){return (this.right_son.getHeight()-this.left_son.getHeight());} //Yotam Switched these
-        public void printNode(){
-            if(father_node != null)System.out.println("printing node: " + key + "\nfather: " + father_node.getKey() + "father height: " + father_node.getHeight() + " left: " + left_son.getKey()
-                    + "left height: " + left_son.getHeight() + " right: " + right_son.getKey() + "right height: " + right_son.getHeight());
-            else{System.out.println("is root: " + key + " left: " + left_son.getKey()
-                    + "left height: " + left_son.getHeight() + " right: " + right_son.getKey() + "right height: " + right_son.getHeight());}
         }
+        public int getHeight() {return this.height;}
+        public int getBF(){return (this.right_son.getHeight()-this.left_son.getHeight());}
     }
 
 }
