@@ -364,13 +364,13 @@ public class AVLTree {
     }
 
     public IAVLNode successor(IAVLNode node){ //Complexity - O(log(n))
-        if(node.getRight().getKey() != -1){
+        if(node.getRight().getKey() != -1){//has right son so go right and get min
 //            System.out.println("y = " + node.getRight().getKey());
             return getMin(node.getRight());
         }
         IAVLNode y = node.getParent();
 //        System.out.println(y.getKey() + " is predecessor");
-        while (y!=Virtual_node && node==y.getRight()){
+        while (y!=null && node==y.getRight()){//go up the tree and make sure we hold the parents right son
 //            System.out.println("finding successor of " + y.getKey() + "");
             node=y;
             y=node.getParent();
@@ -380,11 +380,11 @@ public class AVLTree {
     }
 
     public IAVLNode predecessor(IAVLNode node){//Complexity - O(log(n))
-        if(node.getLeft().getKey() != -1){
+        if(node.getLeft().getKey() != -1){//has left son so go left and get max
             return getMax(node.getLeft());
         }
         IAVLNode y = node.getParent();
-        while (y!=null&&node==y.getLeft()){
+        while (y!=null&&node==y.getLeft()){//go up the tree and make sure we hold the parents left son
             node=y;
             y=node.getParent();
         }
