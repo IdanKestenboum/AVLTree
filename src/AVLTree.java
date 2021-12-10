@@ -634,7 +634,10 @@ public class AVLTree {
             highertree=t;
             lowertree=this;
         }
+
         if(this.root.getHeight()==t.root.getHeight() || Math.abs(this.root.getHeight()-t.root.getHeight()) == 1){//if trees are same height or 1 apart makes them sons of x
+            int before_height1=root.getHeight();
+            int before_height2=t.root.getHeight();
             x.setRight(biggertree.root);
             x.setLeft(smallertree.root);
             biggertree.root.setParent(x);
@@ -644,6 +647,9 @@ public class AVLTree {
             this.min= smallertree.min;
             this.max= biggertree.max;
             this.root=x;
+            if (Math.abs(before_height1-before_height2) == 1){
+                return 2;
+            }
             return 1;
         }
 
