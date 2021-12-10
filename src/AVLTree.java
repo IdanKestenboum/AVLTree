@@ -1,4 +1,4 @@
-//Idan Kestenboum 315532218 kestenboum + Yotam Gavish 318303765
+//Idan Kestenboum 315532218 kestenboum + Yotam Gavish 318303765 yotamgavish
 
 
 /**
@@ -72,7 +72,7 @@ public class AVLTree {
      * otherwise, returns null.
      *
      */
-    public String search(int k) //calls tree_posotion method and returns the value poninter - overall Complexity O(log(n))
+    public String search(int k) //calls tree_posotion method and returns the value pointer - overall Complexity O(log(n))
     {
 
         IAVLNode res=tree_position(k);
@@ -100,7 +100,7 @@ public class AVLTree {
         IAVLNode inserted = new AVLNode(k, i);
         return insertNode(inserted);
     }
-    private int insertNode(IAVLNode inserted){//inserts a node
+    private int insertNode(IAVLNode inserted){//inserts a node - Complexity - O(log(n))
         int k = inserted.getKey();
         String i = inserted.getValue();
         if(this.root == null){// if tree is empty tree inserted node
@@ -154,7 +154,7 @@ public class AVLTree {
         return counter[0];
     }
 
-    private void deleteNode(IAVLNode node, int[] counter){//deletes node that exists in tree
+    private void deleteNode(IAVLNode node, int[] counter){//deletes node that exists in tree - complexity - O(log(n))
         if (node == null) return;
         if(this.size() == 1){//if node is only node in tree, makes tree empty
             this.root = null;
@@ -297,17 +297,13 @@ public class AVLTree {
 
     public IAVLNode successor(IAVLNode node){ //Complexity - O(log(n))
         if(node.getRight().getKey() != -1){//has right son so go right and get min
-//            System.out.println("y = " + node.getRight().getKey());
             return getMin(node.getRight());
         }
         IAVLNode y = node.getParent();
-//        System.out.println(y.getKey() + " is predecessor");
         while (y!=null && node==y.getRight()){//go up the tree and make sure we hold the parents right son
-//            System.out.println("finding successor of " + y.getKey() + "");
             node=y;
             y=node.getParent();
         }
-//        System.out.println("y= " + y.getKey());
         return y;
     }
 
@@ -325,7 +321,7 @@ public class AVLTree {
     }
     public IAVLNode getMax(IAVLNode node){//Complexity - O(log(n))
         IAVLNode curr = node;
-        while(curr.getRight() != Virtual_node){
+        while(curr.getRight().getKey() != -1){
             curr = curr.getRight();
         }
         return curr;
@@ -426,11 +422,11 @@ public class AVLTree {
             left_right_son.setParent(node);//left right son parent is node
             left.setParent(father);//left parent is father
             if (father!=null){//not rotation on root
-                if (father.getKey()<left.getKey()){//idan changed
-                    father.setRight(left);//idan changed
+                if (father.getKey()<left.getKey()){//choosing to make right or left son
+                    father.setRight(left);
                 }
-                if (father.getKey()> left.getKey()){//idan changed
-                    father.setLeft(left);//idan changed
+                if (father.getKey()> left.getKey()){
+                    father.setLeft(left);
                 }
 
             }
@@ -454,11 +450,11 @@ public class AVLTree {
             right_left_son.setParent(node);
             right.setParent(father);
             if (father!=null){
-                if (father.getKey()<right.getKey()){//idan changed
-                    father.setRight(right);//idan changed
+                if (father.getKey()<right.getKey()){//choosing to make right or left son
+                    father.setRight(right);
                 }
-                if (father.getKey()> right.getKey()){//idan changed
-                    father.setLeft(right);//idan changed
+                if (father.getKey()> right.getKey()){
+                    father.setLeft(right);
                 }
 
             }
@@ -502,9 +498,6 @@ public class AVLTree {
         AVLTree bigger_tree=null;
         IAVLNode minimum = this.min;
         IAVLNode maximum = this.max;
-        double num_counter=0;
-        double operation_counter=0;
-        double max_pointer=0;
 
         if (x == this.max.getKey()){
             bigger_tree = new AVLTree(); // the tree is empty so we initiate a new tree
@@ -575,20 +568,11 @@ public class AVLTree {
                 if (otherSon.isRealNode()) {//other son isnt virtual so left subtree isnt empty
                     otherSon.setParent(null);
 
-                    int temp=tree.join(node, new AVLTree(otherSon, getMin(otherSon), getMax(otherSon)));//join tree that fits(bigger or smaller) with subtree of other son using the node
-                    operation_counter+=temp;
-                    num_counter+=1;
-                    if (temp>max_pointer){
-                        max_pointer=temp;
-                    }
+                    tree.join(node, new AVLTree(otherSon, getMin(otherSon), getMax(otherSon)));//join tree that fits(bigger or smaller) with subtree of other son using the node
+
                 }
                 else{//if subtree is empty we can just insert node to bigger/smaller tree
-                    int temp=tree.insertNode(node);
-                    operation_counter+=temp;
-                    num_counter+=1;
-                    if (temp>max_pointer){
-                        max_pointer=temp;
-                    }
+                    tree.insertNode(node);
                 }
             }// after inserting need to adjust min/max pointers
             smaller_tree.min = minimum;
@@ -597,8 +581,6 @@ public class AVLTree {
             bigger_tree.max = maximum;
         }
         AVLTree[] res = {smaller_tree, bigger_tree};
-        System.out.println("average cost"+operation_counter/num_counter);
-        System.out.println("max "+max_pointer);
         return res;
     }
     public void isolate_node(IAVLNode node){ //disconnects node from its sons and father- complexity - O(1)
@@ -728,11 +710,11 @@ public class AVLTree {
         public boolean isRealNode(); // Returns True if this is a non-virtual AVL node.
         public void setHeight(int height); // Sets the height of the node.
         public int getHeight(); // Returns the height of the node (-1 for virtual nodes).
-        public void adjustHeight();
-        public void adjustHeight(int[] counter);
-        public int getBF();
-        public void adjustSize();
-        public int getSize();
+        public void adjustHeight(); //updating the height of the node according to its sons
+        public void adjustHeight(int[] counter); //updating the height of the node according to its sons + updates counter
+        public int getBF(); // calculates BF according to sons
+        public void adjustSize(); //  //updating the size of the node according to its sons
+        public int getSize();//return size
     }
 
     /**

@@ -13,12 +13,10 @@ public class Tests {
     public boolean search() {
         AVLTree avlTree = new AVLTree();
         if (avlTree.search(1) != null) {
-            System.out.println("got"+avlTree.search(1));
             return false;
         }
         avlTree.insert(1, "hello");
         if (avlTree.search(1).equals("hello")) {
-            System.out.println("got"+avlTree.search(1));
             return true;
         }
         return false;
